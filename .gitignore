@@ -1,0 +1,73 @@
+research/
+.build/
+device-backups/
+firmware/build/
+firmware/sdkconfig
+firmware/sdkconfig.old
+__pycache__/
+*.pem
+*.key
+*.p12
+*.pfx
+*pair_record*
+*pairing_record*
+.env
+.DS_Store
+
+firmware-device/managed_components/
+firmware-device/sdkconfig
+firmware-device/sdkconfig.old
+firmware-device/build/
+
+# Local diagnostics can include device identifiers, network details and host paths.
+# Keep reviewed conclusions in Markdown; retain raw output locally, outside Git.
+*.log
+*.log.*
+*.xcactivitylog
+*.xcresult/
+*.trace/
+*.pcap
+*.pcapng
+/attachments/
+/logs/
+/diagnostics/
+
+# Generated validation output and machine-specific session inventories.
+/docs/**/evidence/
+/docs/local-validation/*
+!/docs/local-validation/*.md
+/docs/integration/*.json
+/docs/usb-device/baseline.json
+/ios-app/docs/xcode-validation/
+/ios-app/docs/background-runs/validation.txt
+/ios-app/docs/siri-validation/*.json
+
+# Isolated NCM/CoreDevice experiment; diagnostic bytes and build outputs stay local.
+/ncm-dev/firmware/managed_components/
+/ncm-dev/firmware/sdkconfig*
+!/ncm-dev/firmware/sdkconfig.defaults
+/ncm-dev/firmware/build/
+/ncm-dev/TapitoNCM/.build/
+/ncm-dev/TapitoNCM/.swiftpm/
+/ncm-dev/**/pairing*.plist
+/ncm-dev/**/identity*.plist
+/ncm-dev/**/screen*.png
+/ncm-dev/**/screen*.hevc
+/ncm-dev/rust/target/
+
+# Keep captured screens and their manifests local; retain app assets and test fixtures.
+/docs/**/*.png
+/docs/**/*.jpg
+/docs/**/*.jpeg
+# Reviewed architecture diagram referenced by the workflow design documents.
+!/docs/assets/tapito-workflow-model-nodes-v1.png
+/ios-app/docs/**/*.png
+/ios-app/docs/**/*.jpg
+/archives/history/**/*.png
+/archives/history/**/*.jpg
+/archives/history/**/*.jpeg
+
+# Removed source bundles and local handoff snapshots.
+/archives/PhoneAgent-iOS-source.zip
+/archives/esp32-iphone-coredevice-protocol-v0.3.tar.gz
+**/handoffs/

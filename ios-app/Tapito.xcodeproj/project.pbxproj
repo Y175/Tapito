@@ -1,0 +1,2270 @@
+// !$*UTF8*$!
+{
+	"archiveVersion" = 1;
+	"classes" = {
+	};
+	"objectVersion" = 56;
+	"objects" = {
+		"9F0AC23D4698CC02B51EE183" = {
+			"isa" = "XCLocalSwiftPackageReference";
+			"relativePath" = "Vendor/SwiftAgentKit";
+		};
+		"DCE2077F5F9905FBF2775226" = {
+			"isa" = "XCLocalSwiftPackageReference";
+			"relativePath" = "ProviderKit";
+		};
+		"0D177A3AC98D176BB4C8F56E" = {
+			"isa" = "XCRemoteSwiftPackageReference";
+			"repositoryURL" = "https://github.com/gonzalezreal/swift-markdown-ui.git";
+			"requirement" = {
+				"kind" = "exactVersion";
+				"version" = "2.4.1";
+			};
+		};
+		"4151D53966556EF834C59790" = {
+			"isa" = "XCLocalSwiftPackageReference";
+			"relativePath" = "TapitoVoiceKit";
+		};
+		"245C0B7B5AC8181B3947183C" = {
+			"isa" = "XCLocalSwiftPackageReference";
+			"relativePath" = "TapitoConnectionKit";
+		};
+		"2729DA436ECED6D502DFB3F3" = {
+			"isa" = "XCLocalSwiftPackageReference";
+			"relativePath" = "TapitoAgentKit";
+		};
+		"748A15148AD442FC2754486A" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Shared/AgentActivityAttributes.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"38C35B647247749A948EB9DD" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "748A15148AD442FC2754486A";
+		};
+		"CDA8993049CDE1016628FE73" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Shared/AppIdentity.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"B8ECA644EF9B074591CF3C81" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "CDA8993049CDE1016628FE73";
+		};
+		"66C2112C561B6037FC36D5A4" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Shared/EndVoiceSessionIntent.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"FD897C9F065FAAC8A37E7659" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "66C2112C561B6037FC36D5A4";
+		};
+		"629CCB2B173067BBB861B258" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Shared/IslandPresentationProbe.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"13AA7EF4DEFBD0EC8D34A4A6" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "629CCB2B173067BBB861B258";
+		};
+		"C310D3B188CE7D3038A39FF5" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Shared/StartVoiceTaskIntent.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"907ED1F28F03BEB35BF321BF" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "C310D3B188CE7D3038A39FF5";
+		};
+		"F9A5489FDE322CE6130752E6" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Tapito/Agent/AgentSessionController.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"76F1E56C51AFD4B45448AEDE" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "F9A5489FDE322CE6130752E6";
+		};
+		"998198B06A6C5FF2D64628D9" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Tapito/Agent/ChatGPTOAuthUIFixture.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"E7C9A23FE46236DD07C353EF" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "998198B06A6C5FF2D64628D9";
+		};
+		"8D172E7C2EE354355138FFEB" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Tapito/Agent/ChatGPTSubscriptionProvider.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"C62E0737562FF7C5EAF1B94B" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "8D172E7C2EE354355138FFEB";
+		};
+		"41D1930D2568772D00A6DE23" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Tapito/Agent/DeviceTools.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"D6844C66AAD90667E2B8892A" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "41D1930D2568772D00A6DE23";
+		};
+		"56739E715FFA54D0140F913B" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Tapito/Agent/ModelDiscovery.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"49C329851C26387C5E6ED242" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "56739E715FFA54D0140F913B";
+		};
+		"994212168397A6D75A84BE41" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Tapito/Agent/ModelStreamDecoder.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"C5D36F2B13D1E374C3771273" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "994212168397A6D75A84BE41";
+		};
+		"141E585A7013D1CFBE8146FC" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Tapito/Agent/Providers.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"245FD32DDAAA80C7872FC0CE" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "141E585A7013D1CFBE8146FC";
+		};
+		"EF2E7117C926E4F21ED7FDEF" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Tapito/Agent/ReadableReasoning.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"5BDE6F9F76BF254D33E61A33" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "EF2E7117C926E4F21ED7FDEF";
+		};
+		"9FF9D992C1FEDBE38EA768CE" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Tapito/Agent/SkillTools.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"6367AB66E0AFD697EFF8B0CD" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "9FF9D992C1FEDBE38EA768CE";
+		};
+		"01DCE5278F1A724F1B099FD2" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Tapito/Agent/WorkflowPixels.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"4BAC0228D7E5EF8BA5AE331F" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "01DCE5278F1A724F1B099FD2";
+		};
+		"042D4F017D186559D56733D6" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Tapito/AgentUI/AgentPresentationAdapter.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"A807C5BAEEC9328707615544" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "042D4F017D186559D56733D6";
+		};
+		"71C56D229472ADF98E19C59D" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Tapito/AgentUI/Components/ReasoningMessageView.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"006776A4DCE0A2717E2D52B2" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "71C56D229472ADF98E19C59D";
+		};
+		"0BC1D1CF0303151E7AA8A1AE" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Tapito/AgentUI/Components/ToolInvocationView.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"C25304E17230D8CF71BBBE2E" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "0BC1D1CF0303151E7AA8A1AE";
+		};
+		"846124515C60753FBB7B0E48" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Tapito/App/AssistantMemoryView.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"A7C113A45E81FF0EF197BA7D" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "846124515C60753FBB7B0E48";
+		};
+		"AF95EF6EBFA789E5669D4669" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Tapito/App/AttachmentPicker.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"96775B86D6941AF411171CF2" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "AF95EF6EBFA789E5669D4669";
+		};
+		"20ED50A8B10E60150E2A8E19" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Tapito/App/AttachmentViews.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"01627AE0C80CE5CF0FD59525" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "20ED50A8B10E60150E2A8E19";
+		};
+		"6946716101E6195C722E15E2" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Tapito/App/ChatGPTLoopbackProbe.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"7803788D84D240008416F1DF" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "6946716101E6195C722E15E2";
+		};
+		"95168B056521FE6198F6F80A" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Tapito/App/ChatGPTSignInController.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"337A6FCBD3ACF42D1F0C9E6E" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "95168B056521FE6198F6F80A";
+		};
+		"6DD914F367843800B8742F3E" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Tapito/App/ContentView.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"51B4188E56041B08E79BB4E6" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "6DD914F367843800B8742F3E";
+		};
+		"0DE3FCA974B73504F56CD8EC" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Tapito/App/ConversationView.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"050D65D4547C2993DE798D7F" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "0DE3FCA974B73504F56CD8EC";
+		};
+		"40A5950F51008384B274F757" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Tapito/App/DeviceControlsView.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"6CA53D340F0CFB038B89768F" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "40A5950F51008384B274F757";
+		};
+		"7208C291A30859BFF9071C12" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Tapito/App/PageKnowledgeView.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"53D6053803A767AD7F47940A" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "7208C291A30859BFF9071C12";
+		};
+		"2BBF8EAB546643C61AC8DB78" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Tapito/App/ProvidersView.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"E28E98447838B70B87D8BB6A" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "2BBF8EAB546643C61AC8DB78";
+		};
+		"A50F0CF5BECFFCF93F2A4120" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Tapito/App/SettingsView.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"04741841B2977B1DF7594BDA" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "A50F0CF5BECFFCF93F2A4120";
+		};
+		"DFC154B9DD844AE279939013" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Tapito/App/SkillsView.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"AB6BF06CA47F72514E7710EF" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "DFC154B9DD844AE279939013";
+		};
+		"1B392B968CD9B0EA0AE23DB6" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Tapito/App/TapitoApp.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"C984576F606C1B43D5DA890E" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "1B392B968CD9B0EA0AE23DB6";
+		};
+		"0D9D8B8DB0CCD79E05E504B5" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Tapito/App/WorkflowLibraryView.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"3BBC83D58F079B56BE9C87FE" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "0D9D8B8DB0CCD79E05E504B5";
+		};
+		"5765F578A850D32ECD98293A" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Tapito/Background/ContinuedProcessingScheduler.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"E939D8AB43F552897A764C93" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "5765F578A850D32ECD98293A";
+		};
+		"884A03261613F161A58E618C" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Tapito/Background/IntentRunExecutionScope.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"40DA6DEAFB4B662EAF547DB4" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "884A03261613F161A58E618C";
+		};
+		"A08093886AB5D3F4FFFE784D" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Tapito/Background/LocationRunScheduler.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"B45756374AD4AC373CC3036E" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "A08093886AB5D3F4FFFE784D";
+		};
+		"873CDE20CABA3DE2DDD2DD6A" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Tapito/Background/PiPBackedRunScheduler.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"F4B267AEAB742EB9110A49D7" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "873CDE20CABA3DE2DDD2DD6A";
+		};
+		"5255905EA5AB54E019F00611" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Tapito/Background/RunBackgroundScheduler.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"A91CAF0455A7D8581FED64BA" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "5255905EA5AB54E019F00611";
+		};
+		"8B42BAC458F4A6C88277AD9E" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Tapito/Background/RunExecutionScheduler.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"383EED01A18DEFFA4E88F394" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "8B42BAC458F4A6C88277AD9E";
+		};
+		"12B40647738BB8DA667BF993" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Tapito/Background/RunLifecycleCoordinator.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"A6738E1852AE241605336433" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "12B40647738BB8DA667BF993";
+		};
+		"9D4957587AEF27ED666E2DA3" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Tapito/Background/ScreenUSBExecutionContext.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"7C340847A1E0F3C2011A2D6C" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "9D4957587AEF27ED666E2DA3";
+		};
+		"3D08F12620650F2296806740" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Tapito/Bridge/Bridge.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"C82F84CD3645C079F44CC4A1" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "3D08F12620650F2296806740";
+		};
+		"A6913C59A703E02C6A8850B6" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Tapito/Bridge/DemoBridge.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"8CD1A1E3DDF4122EBDD689B4" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "A6913C59A703E02C6A8850B6";
+		};
+		"70909DFBDF31C690ABC8DB5E" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Tapito/Bridge/NCMDeviceBridge.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"E0AA196A94070437757E2AC2" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "70909DFBDF31C690ABC8DB5E";
+		};
+		"8F3B8241CC1F28392E4C8295" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Tapito/Bridge/TLSBridge.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"1122DC6847A4F5958C96B025" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "8F3B8241CC1F28392E4C8295";
+		};
+		"4343C9B9A932308DAB9C58A7" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Tapito/Bridge/USBCommandClient.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"2C49A13B25B906ABB44F1ABE" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "4343C9B9A932308DAB9C58A7";
+		};
+		"473632AA3427BFB289CD12CC" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Tapito/Bridge/USBDeviceBridge.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"67D65198E00088E147A52AFB" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "473632AA3427BFB289CD12CC";
+		};
+		"578FB532FEEA58C6339D69DA" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Tapito/Bridge/Wire.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"D1332E2CCA29EE0CD51AC901" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "578FB532FEEA58C6339D69DA";
+		};
+		"529BEDDA01D003CAD82D7525" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Tapito/Capture/LatestScreenFrame.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"344D327B1F885668DDBD7EB2" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "529BEDDA01D003CAD82D7525";
+		};
+		"3D86ABCD85EAA58E1D217BCE" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Tapito/Capture/ScreenCaptureController.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"B07415C2BE5B7721CBBBC39A" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "3D86ABCD85EAA58E1D217BCE";
+		};
+		"3D66BB806D4E61C5A7ED6B61" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Tapito/Capture/ScreenTextRecognizer.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"7E73F659A26F9A00E2A308C5" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "3D66BB806D4E61C5A7ED6B61";
+		};
+		"DD190673F84C451186877E72" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Tapito/Connection/ConnectionSetupSection.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"DDA569B5BDB6A8023948E83C" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "DD190673F84C451186877E72";
+		};
+		"F64F2CD0AF08E51DB7B0203C" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Tapito/Connection/DeviceConnectionServices.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"5B3AFEA518BE17C5A8F3D57C" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "F64F2CD0AF08E51DB7B0203C";
+		};
+		"3C4502F3BBF3E96D5F0AC387" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Tapito/Connection/EmbeddedLoopbackVPN.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"92D12F759AA8D9136DB6943A" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "3C4502F3BBF3E96D5F0AC387";
+		};
+		"B104A81B1C4873B2460C79F5" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Tapito/Connection/OutdoorConnectionIntents.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"84D66140525CB52EFAB7E955" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "B104A81B1C4873B2460C79F5";
+		};
+		"B41836CB475A2D6DA614BBBD" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Tapito/ESP32Control/ESP32ControlSettingsView.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"EC68C20DDCC652CED9B703F7" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "B41836CB475A2D6DA614BBBD";
+		};
+		"695A2EDA289DEA217A88DC5B" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Tapito/ESP32Control/PairingFlow.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"887D3EFF8010BC4CF10D7414" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "695A2EDA289DEA217A88DC5B";
+		};
+		"868DF5A0C01577451CD067EC" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Tapito/Intents/AgentIntents.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"7780A13BB5773499A0AFB475" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "868DF5A0C01577451CD067EC";
+		};
+		"9DFF87ACDAAD4B212C589809" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Tapito/LiveActivity/ActivityNavigation.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"AAD101CF4CD098AC70D3D7C2" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "9DFF87ACDAAD4B212C589809";
+		};
+		"62524F59BE0AB84FF48550CF" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Tapito/LiveActivity/AgentLiveActivityController.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"EAE06DDA21A986F0F28E60C0" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "62524F59BE0AB84FF48550CF";
+		};
+		"6E66EFF6DC53132F3107394E" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Tapito/LiveActivity/ApprovalRecordStore.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"C1163F5C793B24608E08A986" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "6E66EFF6DC53132F3107394E";
+		};
+		"3F9572FA9D9AE5900110F5FD" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Tapito/Models/ChatGPTSubscription.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"3BCFE626ED73A544FD49B06F" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "3F9572FA9D9AE5900110F5FD";
+		};
+		"E808FB691F2F7D53E4F1C1C2" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Tapito/Models/ConversationModels.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"728182B4B2AC18CEEDFA9828" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "E808FB691F2F7D53E4F1C1C2";
+		};
+		"1EA918648A52AB1AAD755227" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Tapito/Models/Models.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"6178AA51B91FC1F7ADBCC81D" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "1EA918648A52AB1AAD755227";
+		};
+		"0F1769B4BDED9D2C78EDB7A3" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Tapito/Models/ProviderModels.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"B1E656B268E5D703A03CEA42" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "0F1769B4BDED9D2C78EDB7A3";
+		};
+		"6629E61B571645170D8BBB54" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Tapito/Security/ChatGPTOAuth.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"3F5DDFF6574E330C3BED7B77" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "6629E61B571645170D8BBB54";
+		};
+		"5871E8D9CA4C6183870B2C92" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Tapito/Security/SecretStore.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"FC120EE0EACE4FD4B5EE117B" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "5871E8D9CA4C6183870B2C92";
+		};
+		"8FDD3332CB6CA2E502B6292A" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Tapito/SessionCommands/SessionCommand.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"DD3E56489A8F41A532AA000D" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "8FDD3332CB6CA2E502B6292A";
+		};
+		"0C2116BB0E9727859C64474B" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Tapito/SessionCommands/TapitoRuntime.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"DCD95C4FCA2808ADC89001D6" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "0C2116BB0E9727859C64474B";
+		};
+		"EC0681C24ECA6ABB40A7EBA3" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Tapito/Status/AgentStatusSnapshot.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"1248B735802BD3382BD3A403" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "EC0681C24ECA6ABB40A7EBA3";
+		};
+		"AAD822684F586ED220D1BC79" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Tapito/Status/StatusPiPController.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"2FA413774E6302C2AFD74BD2" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "AAD822684F586ED220D1BC79";
+		};
+		"991B7DEC836C6F2EF8486589" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Tapito/Status/StatusPiPPanel.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"2851FD0435D326426566CDC8" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "991B7DEC836C6F2EF8486589";
+		};
+		"42039904941CD14CC8A17A9B" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Tapito/Storage/AttachmentStore.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"488795D4B83179092567BC0B" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "42039904941CD14CC8A17A9B";
+		};
+		"A6BF8A65928BDF1A1D7C0C6F" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Tapito/Storage/ConversationStore.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"2CF89A8E75371CDB88F39E41" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "A6BF8A65928BDF1A1D7C0C6F";
+		};
+		"13650A9DD6A89CB02464F459" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Tapito/Storage/ProviderStore.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"C2CF3CD52C50B6CD89577BCF" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "13650A9DD6A89CB02464F459";
+		};
+		"9AB6D91F91F9DE7082158970" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Tapito/Storage/SkillStore.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"726B08FC78F0CA2EBF8BF67E" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "9AB6D91F91F9DE7082158970";
+		};
+		"2A4D240BD8502B360628FD8B" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Tapito/Storage/TaskStore.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"0D1364D9B906B27E1B13E167" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "2A4D240BD8502B360628FD8B";
+		};
+		"7F627E4FA04CF5E7154517CA" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Tapito/Voice/SimulatorVoiceFixture.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"1343F54AB8C6CA8D9CCD651A" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "7F627E4FA04CF5E7154517CA";
+		};
+		"083D780D75628CBA304BE500" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Tapito/Voice/TapitoVoiceController.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"444B84C520A05149A790DA27" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "083D780D75628CBA304BE500";
+		};
+		"0F28928135BB9BDFD9D7CB04" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Tapito/Voice/VoiceSessionPanel.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"5ED904405939A8B72E05FD15" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "0F28928135BB9BDFD9D7CB04";
+		};
+		"F201C9B74E31CE0D752093F1" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "../ncm-dev/TapitoNCM/Sources/TapitoNCM/Diagnostic.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"F29582E8216E2ABE120B7BF7" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "F201C9B74E31CE0D752093F1";
+		};
+		"4C4A7187FB45C56BEE0DC2A8" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "../ncm-dev/TapitoNCM/Sources/TapitoNCM/InterfaceBinding.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"BA8CD0F89E1553AB4D1D647E" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "4C4A7187FB45C56BEE0DC2A8";
+		};
+		"CF01694913A065C4C8328661" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "../ncm-dev/TapitoNCM/Sources/TapitoNCM/LocalVPNDiscovery.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"E5ADC7054FE7C4505DD21704" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "CF01694913A065C4C8328661";
+		};
+		"850BD779F81B52985D31C97D" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "../ncm-dev/TapitoNCM/Sources/TapitoNCM/NCMProbeClient.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"26FFB6D53F9201894B6644D3" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "850BD779F81B52985D31C97D";
+		};
+		"AF1E4E303B44627E1770C0D9" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "../ncm-dev/TapitoNCM/Sources/TapitoNCM/NativeDeveloperServices.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"883F59B53EDC0AD9D217450C" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "AF1E4E303B44627E1770C0D9";
+		};
+		"DF60AB286FF1CA7426207FE4" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "../ncm-dev/TapitoNCM/Sources/TapitoNCM/NativeProtocolDiagnostics.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"6B39FA604FB36BC3E0113FD8" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "DF60AB286FF1CA7426207FE4";
+		};
+		"F314C35FAE94FA2EF8B3C009" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "../ncm-dev/TapitoNCM/Sources/TapitoNCM/RemotePairRecordStore.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"30FF9A321AC75FB56CFE796D" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "F314C35FAE94FA2EF8B3C009";
+		};
+		"AD42E1E0CEDC94A8EFC2F8BA" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "../ncm-dev/TapitoNCM/Sources/TapitoNCM/RemotePairingSession.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"48DEE2A0F8B93770003BED41" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "AD42E1E0CEDC94A8EFC2F8BA";
+		};
+		"8F77993F88AE23E2ED42882D" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "folder.assetcatalog";
+			"path" = "Tapito/Assets.xcassets";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"58E1CF4947143204A7CC1098" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "8F77993F88AE23E2ED42882D";
+		};
+		"50135F8F9EDE5052626461FD" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "text.json.xcstrings";
+			"path" = "Tapito/InfoPlist.xcstrings";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"052491157C03149E0EC84D85" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "50135F8F9EDE5052626461FD";
+		};
+		"9253E3D25B280F0E9CA3C416" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "text.json.xcstrings";
+			"path" = "Tapito/Intents/AppShortcuts.xcstrings";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"492844C9E7ED93E8B10F970F" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "9253E3D25B280F0E9CA3C416";
+		};
+		"552E29A239604B6D2CB4AF1D" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "text.json.xcstrings";
+			"path" = "Tapito/Intents/Localizable.xcstrings";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"1937DFC2CFE4592F4FE5DF18" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "552E29A239604B6D2CB4AF1D";
+		};
+		"E508E5D56E68A7157853C5C9" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "text.xml";
+			"path" = "Tapito/PrivacyInfo.xcprivacy";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"4386617EEE08D02845935959" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "E508E5D56E68A7157853C5C9";
+		};
+		"6D5D9004797377E10C60545A" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "folder";
+			"path" = "Licenses";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"C749221ACE2CA5306A5A08DF" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "6D5D9004797377E10C60545A";
+		};
+		"B785A75BEA778B01850658C2" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "folder";
+			"path" = "Tapito/BuiltinSkills";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"A8F0009E4D4DAD401FC52F84" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "B785A75BEA778B01850658C2";
+		};
+		"0E131F211A9DA26B90BF9905" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "folder";
+			"path" = "Tapito/ConnectionResources";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"390784221929B9694E0BB8E2" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "0E131F211A9DA26B90BF9905";
+		};
+		"43BF19C26C049EEADB3EDE00" = {
+			"isa" = "PBXGroup";
+			"name" = "Tapito";
+			"children" = ("748A15148AD442FC2754486A", "CDA8993049CDE1016628FE73", "66C2112C561B6037FC36D5A4", "629CCB2B173067BBB861B258", "C310D3B188CE7D3038A39FF5", "F9A5489FDE322CE6130752E6", "998198B06A6C5FF2D64628D9", "8D172E7C2EE354355138FFEB", "41D1930D2568772D00A6DE23", "56739E715FFA54D0140F913B", "994212168397A6D75A84BE41", "141E585A7013D1CFBE8146FC", "EF2E7117C926E4F21ED7FDEF", "9FF9D992C1FEDBE38EA768CE", "01DCE5278F1A724F1B099FD2", "042D4F017D186559D56733D6", "71C56D229472ADF98E19C59D", "0BC1D1CF0303151E7AA8A1AE", "846124515C60753FBB7B0E48", "AF95EF6EBFA789E5669D4669", "20ED50A8B10E60150E2A8E19", "6946716101E6195C722E15E2", "95168B056521FE6198F6F80A", "6DD914F367843800B8742F3E", "0DE3FCA974B73504F56CD8EC", "40A5950F51008384B274F757", "7208C291A30859BFF9071C12", "2BBF8EAB546643C61AC8DB78", "A50F0CF5BECFFCF93F2A4120", "DFC154B9DD844AE279939013", "1B392B968CD9B0EA0AE23DB6", "0D9D8B8DB0CCD79E05E504B5", "5765F578A850D32ECD98293A", "884A03261613F161A58E618C", "A08093886AB5D3F4FFFE784D", "873CDE20CABA3DE2DDD2DD6A", "5255905EA5AB54E019F00611", "8B42BAC458F4A6C88277AD9E", "12B40647738BB8DA667BF993", "9D4957587AEF27ED666E2DA3", "3D08F12620650F2296806740", "A6913C59A703E02C6A8850B6", "70909DFBDF31C690ABC8DB5E", "8F3B8241CC1F28392E4C8295", "4343C9B9A932308DAB9C58A7", "473632AA3427BFB289CD12CC", "578FB532FEEA58C6339D69DA", "529BEDDA01D003CAD82D7525", "3D86ABCD85EAA58E1D217BCE", "3D66BB806D4E61C5A7ED6B61", "DD190673F84C451186877E72", "F64F2CD0AF08E51DB7B0203C", "3C4502F3BBF3E96D5F0AC387", "B104A81B1C4873B2460C79F5", "B41836CB475A2D6DA614BBBD", "695A2EDA289DEA217A88DC5B", "868DF5A0C01577451CD067EC", "9DFF87ACDAAD4B212C589809", "62524F59BE0AB84FF48550CF", "6E66EFF6DC53132F3107394E", "3F9572FA9D9AE5900110F5FD", "E808FB691F2F7D53E4F1C1C2", "1EA918648A52AB1AAD755227", "0F1769B4BDED9D2C78EDB7A3", "6629E61B571645170D8BBB54", "5871E8D9CA4C6183870B2C92", "8FDD3332CB6CA2E502B6292A", "0C2116BB0E9727859C64474B", "EC0681C24ECA6ABB40A7EBA3", "AAD822684F586ED220D1BC79", "991B7DEC836C6F2EF8486589", "42039904941CD14CC8A17A9B", "A6BF8A65928BDF1A1D7C0C6F", "13650A9DD6A89CB02464F459", "9AB6D91F91F9DE7082158970", "2A4D240BD8502B360628FD8B", "7F627E4FA04CF5E7154517CA", "083D780D75628CBA304BE500", "0F28928135BB9BDFD9D7CB04", "F201C9B74E31CE0D752093F1", "4C4A7187FB45C56BEE0DC2A8", "CF01694913A065C4C8328661", "850BD779F81B52985D31C97D", "AF1E4E303B44627E1770C0D9", "DF60AB286FF1CA7426207FE4", "F314C35FAE94FA2EF8B3C009", "AD42E1E0CEDC94A8EFC2F8BA", "8F77993F88AE23E2ED42882D", "50135F8F9EDE5052626461FD", "9253E3D25B280F0E9CA3C416", "552E29A239604B6D2CB4AF1D", "E508E5D56E68A7157853C5C9", "6D5D9004797377E10C60545A", "B785A75BEA778B01850658C2", "0E131F211A9DA26B90BF9905",);
+			"sourceTree" = "<group>";
+		};
+		"332EE9616E1061799D85A1FD" = {
+			"isa" = "PBXFileReference";
+			"explicitFileType" = "wrapper.application";
+			"includeInIndex" = 0;
+			"path" = "Tapito.app";
+			"sourceTree" = "BUILT_PRODUCTS_DIR";
+		};
+		"A9E7017F4F990F80200BB23F" = {
+			"isa" = "XCSwiftPackageProductDependency";
+			"package" = "9F0AC23D4698CC02B51EE183";
+			"productName" = "SwiftAgentKit";
+		};
+		"905F56B2F3CADD5972D2DD29" = {
+			"isa" = "PBXBuildFile";
+			"productRef" = "A9E7017F4F990F80200BB23F";
+		};
+		"725FA83EB42091B650C485F7" = {
+			"isa" = "XCSwiftPackageProductDependency";
+			"package" = "DCE2077F5F9905FBF2775226";
+			"productName" = "ProviderCore";
+		};
+		"6F1DF0F3B137AE3A18AE0F8E" = {
+			"isa" = "PBXBuildFile";
+			"productRef" = "725FA83EB42091B650C485F7";
+		};
+		"2055E7C62581E3D47422B0EC" = {
+			"isa" = "XCSwiftPackageProductDependency";
+			"package" = "DCE2077F5F9905FBF2775226";
+			"productName" = "OpenAIAdapter";
+		};
+		"903023A17CBE58A871C11C3E" = {
+			"isa" = "PBXBuildFile";
+			"productRef" = "2055E7C62581E3D47422B0EC";
+		};
+		"5122FA84C0C1EE6B162A6775" = {
+			"isa" = "XCSwiftPackageProductDependency";
+			"package" = "4151D53966556EF834C59790";
+			"productName" = "TapitoVoiceCore";
+		};
+		"65B770665ECFF4722DE16441" = {
+			"isa" = "PBXBuildFile";
+			"productRef" = "5122FA84C0C1EE6B162A6775";
+		};
+		"7BAF42B9253248AD856FB25B" = {
+			"isa" = "XCSwiftPackageProductDependency";
+			"package" = "4151D53966556EF834C59790";
+			"productName" = "TapitoVoiceAudio";
+		};
+		"4E4363E99A59FFDDD8B638B0" = {
+			"isa" = "PBXBuildFile";
+			"productRef" = "7BAF42B9253248AD856FB25B";
+		};
+		"730B0DE725249019EFD27140" = {
+			"isa" = "XCSwiftPackageProductDependency";
+			"package" = "245C0B7B5AC8181B3947183C";
+			"productName" = "TapitoConnectionKit";
+		};
+		"BC110D97B49F29A605262B20" = {
+			"isa" = "PBXBuildFile";
+			"productRef" = "730B0DE725249019EFD27140";
+		};
+		"CA3208F324C2B3487211D203" = {
+			"isa" = "XCSwiftPackageProductDependency";
+			"package" = "2729DA436ECED6D502DFB3F3";
+			"productName" = "TapitoAgentCore";
+		};
+		"1D6A792185DCC6AB27F6780C" = {
+			"isa" = "PBXBuildFile";
+			"productRef" = "CA3208F324C2B3487211D203";
+		};
+		"F6B9271F94847906648B2C50" = {
+			"isa" = "XCSwiftPackageProductDependency";
+			"package" = "2729DA436ECED6D502DFB3F3";
+			"productName" = "TapitoAgentSwiftAgentKit";
+		};
+		"756472380D62B5F503230F12" = {
+			"isa" = "PBXBuildFile";
+			"productRef" = "F6B9271F94847906648B2C50";
+		};
+		"2AB32A23C8141FB750239BF4" = {
+			"isa" = "XCSwiftPackageProductDependency";
+			"package" = "0D177A3AC98D176BB4C8F56E";
+			"productName" = "MarkdownUI";
+		};
+		"4E4A18A74DE7989A0DA88E36" = {
+			"isa" = "PBXBuildFile";
+			"productRef" = "2AB32A23C8141FB750239BF4";
+		};
+		"C7B5E521B48F1BE0CC5AB31C" = {
+			"isa" = "PBXSourcesBuildPhase";
+			"buildActionMask" = 2147483647;
+			"files" = ("38C35B647247749A948EB9DD", "B8ECA644EF9B074591CF3C81", "FD897C9F065FAAC8A37E7659", "13AA7EF4DEFBD0EC8D34A4A6", "907ED1F28F03BEB35BF321BF", "76F1E56C51AFD4B45448AEDE", "E7C9A23FE46236DD07C353EF", "C62E0737562FF7C5EAF1B94B", "D6844C66AAD90667E2B8892A", "49C329851C26387C5E6ED242", "C5D36F2B13D1E374C3771273", "245FD32DDAAA80C7872FC0CE", "5BDE6F9F76BF254D33E61A33", "6367AB66E0AFD697EFF8B0CD", "4BAC0228D7E5EF8BA5AE331F", "A807C5BAEEC9328707615544", "006776A4DCE0A2717E2D52B2", "C25304E17230D8CF71BBBE2E", "A7C113A45E81FF0EF197BA7D", "96775B86D6941AF411171CF2", "01627AE0C80CE5CF0FD59525", "7803788D84D240008416F1DF", "337A6FCBD3ACF42D1F0C9E6E", "51B4188E56041B08E79BB4E6", "050D65D4547C2993DE798D7F", "6CA53D340F0CFB038B89768F", "53D6053803A767AD7F47940A", "E28E98447838B70B87D8BB6A", "04741841B2977B1DF7594BDA", "AB6BF06CA47F72514E7710EF", "C984576F606C1B43D5DA890E", "3BBC83D58F079B56BE9C87FE", "E939D8AB43F552897A764C93", "40DA6DEAFB4B662EAF547DB4", "B45756374AD4AC373CC3036E", "F4B267AEAB742EB9110A49D7", "A91CAF0455A7D8581FED64BA", "383EED01A18DEFFA4E88F394", "A6738E1852AE241605336433", "7C340847A1E0F3C2011A2D6C", "C82F84CD3645C079F44CC4A1", "8CD1A1E3DDF4122EBDD689B4", "E0AA196A94070437757E2AC2", "1122DC6847A4F5958C96B025", "2C49A13B25B906ABB44F1ABE", "67D65198E00088E147A52AFB", "D1332E2CCA29EE0CD51AC901", "344D327B1F885668DDBD7EB2", "B07415C2BE5B7721CBBBC39A", "7E73F659A26F9A00E2A308C5", "DDA569B5BDB6A8023948E83C", "5B3AFEA518BE17C5A8F3D57C", "92D12F759AA8D9136DB6943A", "84D66140525CB52EFAB7E955", "EC68C20DDCC652CED9B703F7", "887D3EFF8010BC4CF10D7414", "7780A13BB5773499A0AFB475", "AAD101CF4CD098AC70D3D7C2", "EAE06DDA21A986F0F28E60C0", "C1163F5C793B24608E08A986", "3BCFE626ED73A544FD49B06F", "728182B4B2AC18CEEDFA9828", "6178AA51B91FC1F7ADBCC81D", "B1E656B268E5D703A03CEA42", "3F5DDFF6574E330C3BED7B77", "FC120EE0EACE4FD4B5EE117B", "DD3E56489A8F41A532AA000D", "DCD95C4FCA2808ADC89001D6", "1248B735802BD3382BD3A403", "2FA413774E6302C2AFD74BD2", "2851FD0435D326426566CDC8", "488795D4B83179092567BC0B", "2CF89A8E75371CDB88F39E41", "C2CF3CD52C50B6CD89577BCF", "726B08FC78F0CA2EBF8BF67E", "0D1364D9B906B27E1B13E167", "1343F54AB8C6CA8D9CCD651A", "444B84C520A05149A790DA27", "5ED904405939A8B72E05FD15", "F29582E8216E2ABE120B7BF7", "BA8CD0F89E1553AB4D1D647E", "E5ADC7054FE7C4505DD21704", "26FFB6D53F9201894B6644D3", "883F59B53EDC0AD9D217450C", "6B39FA604FB36BC3E0113FD8", "30FF9A321AC75FB56CFE796D", "48DEE2A0F8B93770003BED41",);
+			"runOnlyForDeploymentPostprocessing" = 0;
+		};
+		"4C080BBDE9FD39ADCFCD0040" = {
+			"isa" = "PBXFrameworksBuildPhase";
+			"buildActionMask" = 2147483647;
+			"files" = ("905F56B2F3CADD5972D2DD29", "6F1DF0F3B137AE3A18AE0F8E", "903023A17CBE58A871C11C3E", "65B770665ECFF4722DE16441", "4E4363E99A59FFDDD8B638B0", "BC110D97B49F29A605262B20", "1D6A792185DCC6AB27F6780C", "756472380D62B5F503230F12", "4E4A18A74DE7989A0DA88E36",);
+			"runOnlyForDeploymentPostprocessing" = 0;
+		};
+		"68539FB9B1846069D0D10B97" = {
+			"isa" = "PBXResourcesBuildPhase";
+			"buildActionMask" = 2147483647;
+			"files" = ("58E1CF4947143204A7CC1098", "052491157C03149E0EC84D85", "492844C9E7ED93E8B10F970F", "1937DFC2CFE4592F4FE5DF18", "4386617EEE08D02845935959", "C749221ACE2CA5306A5A08DF", "A8F0009E4D4DAD401FC52F84", "390784221929B9694E0BB8E2",);
+			"runOnlyForDeploymentPostprocessing" = 0;
+		};
+		"A7C830303F11E9D980DB096E" = {
+			"isa" = "PBXShellScriptBuildPhase";
+			"buildActionMask" = 2147483647;
+			"files" = ();
+			"inputPaths" = ();
+			"outputPaths" = ();
+			"runOnlyForDeploymentPostprocessing" = 0;
+			"alwaysOutOfDate" = 1;
+			"name" = "Build NCM backend";
+			"shellPath" = "/bin/bash";
+			"shellScript" = "case \"$PLATFORM_NAME\" in\n iphoneos) mode=device ;;\n iphonesimulator) mode=simulator ;;\n *) exit 1 ;;\nesac\nbash \"$SRCROOT/../tools/build_ncm_rust.sh\" \"$mode\"\n";
+		};
+		"36C340AD9CE147BAB8A5214D" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "F5923AE992F42825D29035A4";
+			"settings" = {
+				"ATTRIBUTES" = ("RemoveHeadersOnCopy",);
+			};
+		};
+		"7A8EBE968E3A995E2F856D30" = {
+			"isa" = "PBXCopyFilesBuildPhase";
+			"buildActionMask" = 2147483647;
+			"dstPath" = "";
+			"dstSubfolderSpec" = 13;
+			"files" = ("36C340AD9CE147BAB8A5214D",);
+			"name" = "Embed TapitoLiveActivity";
+			"runOnlyForDeploymentPostprocessing" = 0;
+		};
+		"AE23083E7D4D3C6872D2653B" = {
+			"isa" = "PBXContainerItemProxy";
+			"containerPortal" = "985959785319747668373CC6";
+			"proxyType" = 1;
+			"remoteGlobalIDString" = "DB926EB8872CD9020C30A714";
+			"remoteInfo" = "TapitoLiveActivity";
+		};
+		"7B774F59224BE4F63B3BA3EB" = {
+			"isa" = "PBXTargetDependency";
+			"target" = "DB926EB8872CD9020C30A714";
+			"targetProxy" = "AE23083E7D4D3C6872D2653B";
+		};
+		"1FDCFE4170C0222D59F6B136" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "14542D5537CC01B573CC32AE";
+			"settings" = {
+				"ATTRIBUTES" = ("RemoveHeadersOnCopy",);
+			};
+		};
+		"FAE456A553F937A76E2D09FD" = {
+			"isa" = "PBXCopyFilesBuildPhase";
+			"buildActionMask" = 2147483647;
+			"dstPath" = "";
+			"dstSubfolderSpec" = 13;
+			"files" = ("1FDCFE4170C0222D59F6B136",);
+			"name" = "Embed TapitoLoopbackTunnel";
+			"runOnlyForDeploymentPostprocessing" = 0;
+		};
+		"D65E2DA94BCEC9CBD576D1B4" = {
+			"isa" = "PBXContainerItemProxy";
+			"containerPortal" = "985959785319747668373CC6";
+			"proxyType" = 1;
+			"remoteGlobalIDString" = "CA962AEF2103A8D718415D13";
+			"remoteInfo" = "TapitoLoopbackTunnel";
+		};
+		"8C3221DA81A26DF6B70C09FD" = {
+			"isa" = "PBXTargetDependency";
+			"target" = "CA962AEF2103A8D718415D13";
+			"targetProxy" = "D65E2DA94BCEC9CBD576D1B4";
+		};
+		"AA564EE9819F80E76DFF0E6B" = {
+			"isa" = "XCBuildConfiguration";
+			"name" = "Debug";
+			"buildSettings" = {
+				"PRODUCT_NAME" = "$(TARGET_NAME)";
+				"PRODUCT_BUNDLE_IDENTIFIER" = "com.y175.tapito";
+				"CODE_SIGN_STYLE" = "Automatic";
+				"DEVELOPMENT_TEAM" = "";
+				"GENERATE_INFOPLIST_FILE" = "YES";
+				"TARGETED_DEVICE_FAMILY" = "1,2";
+				"SUPPORTED_PLATFORMS" = "iphoneos iphonesimulator";
+				"SUPPORTS_MACCATALYST" = "NO";
+				"MARKETING_VERSION" = "0.1.0";
+				"CURRENT_PROJECT_VERSION" = "1";
+				"LD_RUNPATH_SEARCH_PATHS" = ("$(inherited)", "@executable_path/Frameworks",);
+				"SWIFT_ACTIVE_COMPILATION_CONDITIONS" = "DEBUG TAPITO_APP $(inherited)";
+				"CODE_SIGN_ENTITLEMENTS" = "Tapito/Tapito.entitlements";
+				"ASSETCATALOG_COMPILER_APPICON_NAME" = "AppIcon";
+				"INFOPLIST_FILE" = "Tapito/Info.plist";
+				"INFOPLIST_KEY_CFBundleDisplayName" = "$(APP_DISPLAY_NAME)";
+				"INFOPLIST_KEY_NSSupportsLiveActivities" = "YES";
+				"INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription" = "将你选择保存的手机截图添加到相册。";
+				"INFOPLIST_KEY_NSMicrophoneUsageDescription" = "Use your microphone for a voice conversation you start. End the conversation to stop recording.";
+				"INFOPLIST_KEY_NSSpeechRecognitionUsageDescription" = "Turn your speech into task text. Transcripts and task screenshots are sent to your selected model provider.";
+				"INFOPLIST_KEY_NSLocalNetworkUsageDescription" = "Connect to your configured local model proxy and explicitly paired development bridge.";
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation" = "YES";
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents" = "YES";
+				"INFOPLIST_KEY_UILaunchScreen_Generation" = "YES";
+				"ARCHS" = "arm64";
+				"ENABLE_USER_SCRIPT_SANDBOXING" = "NO";
+				"HEADER_SEARCH_PATHS" = ("$(inherited)", "$(SRCROOT)/../ncm-dev/TapitoNCM/Sources/CNCMBackend/include",);
+				"OTHER_LDFLAGS" = ("$(inherited)", "-ltapito_ncm_backend", "-framework", "Security", "-framework", "SystemConfiguration",);
+				"LIBRARY_SEARCH_PATHS[sdk=iphoneos*]" = ("$(inherited)", "$(SRCROOT)/../.build/ncm-rust/aarch64-apple-ios/release",);
+				"LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*]" = ("$(inherited)", "$(SRCROOT)/../.build/ncm-rust/aarch64-apple-ios-sim/release",);
+				"SWIFT_OPTIMIZATION_LEVEL" = "-Onone";
+				"ONLY_ACTIVE_ARCH" = "YES";
+				"ENABLE_TESTABILITY" = "YES";
+			};
+		};
+		"90FE83E5F6152FCCE0217E3F" = {
+			"isa" = "XCBuildConfiguration";
+			"name" = "Release";
+			"buildSettings" = {
+				"PRODUCT_NAME" = "$(TARGET_NAME)";
+				"PRODUCT_BUNDLE_IDENTIFIER" = "com.y175.tapito";
+				"CODE_SIGN_STYLE" = "Automatic";
+				"DEVELOPMENT_TEAM" = "";
+				"GENERATE_INFOPLIST_FILE" = "YES";
+				"TARGETED_DEVICE_FAMILY" = "1,2";
+				"SUPPORTED_PLATFORMS" = "iphoneos iphonesimulator";
+				"SUPPORTS_MACCATALYST" = "NO";
+				"MARKETING_VERSION" = "0.1.0";
+				"CURRENT_PROJECT_VERSION" = "1";
+				"LD_RUNPATH_SEARCH_PATHS" = ("$(inherited)", "@executable_path/Frameworks",);
+				"SWIFT_ACTIVE_COMPILATION_CONDITIONS" = "TAPITO_APP $(inherited)";
+				"CODE_SIGN_ENTITLEMENTS" = "Tapito/Tapito.entitlements";
+				"ASSETCATALOG_COMPILER_APPICON_NAME" = "AppIcon";
+				"INFOPLIST_FILE" = "Tapito/Info.plist";
+				"INFOPLIST_KEY_CFBundleDisplayName" = "$(APP_DISPLAY_NAME)";
+				"INFOPLIST_KEY_NSSupportsLiveActivities" = "YES";
+				"INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription" = "将你选择保存的手机截图添加到相册。";
+				"INFOPLIST_KEY_NSMicrophoneUsageDescription" = "Use your microphone for a voice conversation you start. End the conversation to stop recording.";
+				"INFOPLIST_KEY_NSSpeechRecognitionUsageDescription" = "Turn your speech into task text. Transcripts and task screenshots are sent to your selected model provider.";
+				"INFOPLIST_KEY_NSLocalNetworkUsageDescription" = "Connect to your configured local model proxy and explicitly paired development bridge.";
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation" = "YES";
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents" = "YES";
+				"INFOPLIST_KEY_UILaunchScreen_Generation" = "YES";
+				"ARCHS" = "arm64";
+				"ENABLE_USER_SCRIPT_SANDBOXING" = "NO";
+				"HEADER_SEARCH_PATHS" = ("$(inherited)", "$(SRCROOT)/../ncm-dev/TapitoNCM/Sources/CNCMBackend/include",);
+				"OTHER_LDFLAGS" = ("$(inherited)", "-ltapito_ncm_backend", "-framework", "Security", "-framework", "SystemConfiguration",);
+				"LIBRARY_SEARCH_PATHS[sdk=iphoneos*]" = ("$(inherited)", "$(SRCROOT)/../.build/ncm-rust/aarch64-apple-ios/release",);
+				"LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*]" = ("$(inherited)", "$(SRCROOT)/../.build/ncm-rust/aarch64-apple-ios-sim/release",);
+				"SWIFT_OPTIMIZATION_LEVEL" = "-O";
+				"ONLY_ACTIVE_ARCH" = "NO";
+			};
+		};
+		"A39E0816E06B34BF6A05D233" = {
+			"isa" = "XCConfigurationList";
+			"buildConfigurations" = ("AA564EE9819F80E76DFF0E6B", "90FE83E5F6152FCCE0217E3F",);
+			"defaultConfigurationIsVisible" = 0;
+			"defaultConfigurationName" = "Release";
+		};
+		"FE32E92B151026F14A5BC8BB" = {
+			"isa" = "PBXNativeTarget";
+			"name" = "Tapito";
+			"productName" = "Tapito";
+			"productReference" = "332EE9616E1061799D85A1FD";
+			"productType" = "com.apple.product-type.application";
+			"buildConfigurationList" = "A39E0816E06B34BF6A05D233";
+			"buildPhases" = ("A7C830303F11E9D980DB096E", "C7B5E521B48F1BE0CC5AB31C", "4C080BBDE9FD39ADCFCD0040", "68539FB9B1846069D0D10B97", "7A8EBE968E3A995E2F856D30", "FAE456A553F937A76E2D09FD",);
+			"buildRules" = ();
+			"dependencies" = ("7B774F59224BE4F63B3BA3EB", "8C3221DA81A26DF6B70C09FD",);
+			"packageProductDependencies" = ("A9E7017F4F990F80200BB23F", "725FA83EB42091B650C485F7", "2055E7C62581E3D47422B0EC", "5122FA84C0C1EE6B162A6775", "7BAF42B9253248AD856FB25B", "730B0DE725249019EFD27140", "CA3208F324C2B3487211D203", "F6B9271F94847906648B2C50", "2AB32A23C8141FB750239BF4",);
+		};
+		"DE1683DF66839E67F585E9F2" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "TapitoTests/AgentPresentationTests.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"E671F128350F8899F9FE17A1" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "DE1683DF66839E67F585E9F2";
+		};
+		"D55BF35B90F3C8B95ECDD5F7" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "TapitoTests/AttachmentSendingTests.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"399BED8121AD635ED9013907" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "D55BF35B90F3C8B95ECDD5F7";
+		};
+		"2B0BC3494D5B8C99C2440F63" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "TapitoTests/AttachmentStoreTests.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"E0AE948EA8AE7E8C548C7D78" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "2B0BC3494D5B8C99C2440F63";
+		};
+		"336B414F99A28BEEC20256FF" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "TapitoTests/ChatGPTOAuthTests.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"8E99F4B352B53277011F024A" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "336B414F99A28BEEC20256FF";
+		};
+		"82A2C912ED0123A877CCC36E" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "TapitoTests/ChatGPTSubscriptionTests.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"C88D42A1B0D5FDB36EFE2017" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "82A2C912ED0123A877CCC36E";
+		};
+		"D5EF014D3E8ACF4B11AE5FA5" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "TapitoTests/ConversationTests.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"2C406A22636D058851DEA8D2" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "D5EF014D3E8ACF4B11AE5FA5";
+		};
+		"DAFFFA6F31C00FDB77D77753" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "TapitoTests/DependencyStorageTests.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"8FAA322495A1C4B34EFF3A62" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "DAFFFA6F31C00FDB77D77753";
+		};
+		"E642EE955595421EFCAE21C3" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "TapitoTests/DeviceControlRouteTests.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"1A6FCC4453920B0AF3E6B5F5" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "E642EE955595421EFCAE21C3";
+		};
+		"65B56149EB7A9BE2ADD97BE1" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "TapitoTests/ImageHistoryTests.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"444FC942311F568DEFF506D7" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "65B56149EB7A9BE2ADD97BE1";
+		};
+		"FA71BB3AE349932CFF565AC2" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "TapitoTests/IntentExecutionTests.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"B7B0473383547E84E1DA8324" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "FA71BB3AE349932CFF565AC2";
+		};
+		"8FC5A208B544B2F93693E597" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "TapitoTests/LiveActivityTests.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"2518D38C346C889E2AA57E5E" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "8FC5A208B544B2F93693E597";
+		};
+		"5C6643C7BFFECFFCB6A3E49D" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "TapitoTests/LocationExecutionTests.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"B8C45A0B573EDD38B6EE7098" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "5C6643C7BFFECFFCB6A3E49D";
+		};
+		"895F692A26FF3FFCC170FB9E" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "TapitoTests/ModelDiscoveryTests.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"E6775B1FE8792A5820DA8BD3" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "895F692A26FF3FFCC170FB9E";
+		};
+		"9986185120072F5416E5D05B" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "TapitoTests/ModelStreamTests.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"845C8DCC94079575CB32CD74" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "9986185120072F5416E5D05B";
+		};
+		"E484E32B41FD18E487130429" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "TapitoTests/MultiToolTests.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"AAF65FC5E0BA4616982F826C" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "E484E32B41FD18E487130429";
+		};
+		"8631FB12ABA45C70DD3A1941" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "TapitoTests/NCMDeviceBridgeTests.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"FDFD7A0B57DFC662E628D6E1" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "8631FB12ABA45C70DD3A1941";
+		};
+		"37B75652FA56B7ADBAE4357A" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "TapitoTests/ProgramRuntimeTests.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"BF1EA6BDF90B0BF14DB946B5" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "37B75652FA56B7ADBAE4357A";
+		};
+		"AA835AF05853091509EBE58B" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "TapitoTests/ProjectTodoTests.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"249ECFCC46E9F135B4CC1728" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "AA835AF05853091509EBE58B";
+		};
+		"F7CC1AC201E539F95585EFA3" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "TapitoTests/ProtocolTests.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"CEE66BDB9FEE000D8C2DCFEF" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "F7CC1AC201E539F95585EFA3";
+		};
+		"DF5C875D0DC40282E866E6D9" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "TapitoTests/ProviderRuntimeTests.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"3D1325F0E591CDB6AE694ACC" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "DF5C875D0DC40282E866E6D9";
+		};
+		"A6A22D02D5CF45DDAAE8CE12" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "TapitoTests/ProviderTransportTests.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"80AFEB987FBCA3ADED057E90" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "A6A22D02D5CF45DDAAE8CE12";
+		};
+		"472F9334660B0748BC85635D" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "TapitoTests/ReasoningTests.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"E33CD05D02C691CDD00580EB" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "472F9334660B0748BC85635D";
+		};
+		"06E49AC59089FD803932A171" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "TapitoTests/ResponsesProviderTests.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"3AC889125FFF8E69AD117E52" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "06E49AC59089FD803932A171";
+		};
+		"2DECDC5A57885ED952827D8B" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "TapitoTests/RunLifecycleTests.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"C738A7BB0E3D2537D9A98BA6" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "2DECDC5A57885ED952827D8B";
+		};
+		"EE7B963E142DC0B4E1B28EAF" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "TapitoTests/SafetyTests.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"41534BE85A9EAB9CB514ED9C" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "EE7B963E142DC0B4E1B28EAF";
+		};
+		"6D02B84890C827DDCD229094" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "TapitoTests/ScreenTextTests.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"6CE43199A0A68E71F1AA0BF0" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "6D02B84890C827DDCD229094";
+		};
+		"8847C42874146A2B38EA9C4B" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "TapitoTests/ScreenUSBBackgroundTests.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"A0F3ECB1BD6850E7749A2EA6" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "8847C42874146A2B38EA9C4B";
+		};
+		"C9F0633D2E8A08C81B2B397E" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "TapitoTests/SessionCommandTests.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"EAA2B6E0BC6DAB8AD1F476B9" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "C9F0633D2E8A08C81B2B397E";
+		};
+		"CF0CADAC41FA582F5D7949B6" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "TapitoTests/SkillTests.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"916CFC1D156B14ED0E1B7835" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "CF0CADAC41FA582F5D7949B6";
+		};
+		"8B5399D4F787B496CC9B14B6" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "TapitoTests/TapitoVoiceIntegrationTests.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"97369098EEE90A6D4577A9D7" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "8B5399D4F787B496CC9B14B6";
+		};
+		"6B4C695999596EEEF90FF6BA" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "TapitoTests/USBCaptureTests.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"252D773CD7BE7484394914B3" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "6B4C695999596EEEF90FF6BA";
+		};
+		"6CED4A327D28BFAA17F921E6" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "TapitoTests/WorkflowDeviceTests.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"950811C434ABA3288EA8C862" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "6CED4A327D28BFAA17F921E6";
+		};
+		"B7D51D47366E65E9057B4781" = {
+			"isa" = "PBXGroup";
+			"name" = "TapitoTests";
+			"children" = ("DE1683DF66839E67F585E9F2", "D55BF35B90F3C8B95ECDD5F7", "2B0BC3494D5B8C99C2440F63", "336B414F99A28BEEC20256FF", "82A2C912ED0123A877CCC36E", "D5EF014D3E8ACF4B11AE5FA5", "DAFFFA6F31C00FDB77D77753", "E642EE955595421EFCAE21C3", "65B56149EB7A9BE2ADD97BE1", "FA71BB3AE349932CFF565AC2", "8FC5A208B544B2F93693E597", "5C6643C7BFFECFFCB6A3E49D", "895F692A26FF3FFCC170FB9E", "9986185120072F5416E5D05B", "E484E32B41FD18E487130429", "8631FB12ABA45C70DD3A1941", "37B75652FA56B7ADBAE4357A", "AA835AF05853091509EBE58B", "F7CC1AC201E539F95585EFA3", "DF5C875D0DC40282E866E6D9", "A6A22D02D5CF45DDAAE8CE12", "472F9334660B0748BC85635D", "06E49AC59089FD803932A171", "2DECDC5A57885ED952827D8B", "EE7B963E142DC0B4E1B28EAF", "6D02B84890C827DDCD229094", "8847C42874146A2B38EA9C4B", "C9F0633D2E8A08C81B2B397E", "CF0CADAC41FA582F5D7949B6", "8B5399D4F787B496CC9B14B6", "6B4C695999596EEEF90FF6BA", "6CED4A327D28BFAA17F921E6",);
+			"sourceTree" = "<group>";
+		};
+		"A88A3A16A9CB6F78470F0D5C" = {
+			"isa" = "PBXFileReference";
+			"explicitFileType" = "wrapper.cfbundle";
+			"includeInIndex" = 0;
+			"path" = "TapitoTests.xctest";
+			"sourceTree" = "BUILT_PRODUCTS_DIR";
+		};
+		"2DCA0C441CD934C94A8199DA" = {
+			"isa" = "XCSwiftPackageProductDependency";
+			"package" = "9F0AC23D4698CC02B51EE183";
+			"productName" = "SwiftAgentKit";
+		};
+		"6411701C4B7DBDE8FB1D1734" = {
+			"isa" = "PBXBuildFile";
+			"productRef" = "2DCA0C441CD934C94A8199DA";
+		};
+		"66FC8CD8AE796F4B4EAE35F9" = {
+			"isa" = "XCSwiftPackageProductDependency";
+			"package" = "DCE2077F5F9905FBF2775226";
+			"productName" = "ProviderCore";
+		};
+		"EEF1D9DF5E664107DD866452" = {
+			"isa" = "PBXBuildFile";
+			"productRef" = "66FC8CD8AE796F4B4EAE35F9";
+		};
+		"37189DD8C387FB31A00B2391" = {
+			"isa" = "XCSwiftPackageProductDependency";
+			"package" = "DCE2077F5F9905FBF2775226";
+			"productName" = "OpenAIAdapter";
+		};
+		"0AF28EABAD96E0B2C46EE353" = {
+			"isa" = "PBXBuildFile";
+			"productRef" = "37189DD8C387FB31A00B2391";
+		};
+		"DD9BFC744E13250D2318A379" = {
+			"isa" = "XCSwiftPackageProductDependency";
+			"package" = "245C0B7B5AC8181B3947183C";
+			"productName" = "TapitoConnectionKit";
+		};
+		"E3D079B2A8FF5A89A0E081CB" = {
+			"isa" = "PBXBuildFile";
+			"productRef" = "DD9BFC744E13250D2318A379";
+		};
+		"4B5427EDA0625DB1CDB5DF75" = {
+			"isa" = "XCSwiftPackageProductDependency";
+			"package" = "2729DA436ECED6D502DFB3F3";
+			"productName" = "TapitoAgentCore";
+		};
+		"A099F9C9E5DAC8F9CD157DB0" = {
+			"isa" = "PBXBuildFile";
+			"productRef" = "4B5427EDA0625DB1CDB5DF75";
+		};
+		"F57E175FC1709C1F988BE254" = {
+			"isa" = "XCSwiftPackageProductDependency";
+			"package" = "2729DA436ECED6D502DFB3F3";
+			"productName" = "TapitoAgentSwiftAgentKit";
+		};
+		"F8E461C99FB18788E519DE3E" = {
+			"isa" = "PBXBuildFile";
+			"productRef" = "F57E175FC1709C1F988BE254";
+		};
+		"50C01EBCC5D7FF90B4B736A8" = {
+			"isa" = "PBXSourcesBuildPhase";
+			"buildActionMask" = 2147483647;
+			"files" = ("E671F128350F8899F9FE17A1", "399BED8121AD635ED9013907", "E0AE948EA8AE7E8C548C7D78", "8E99F4B352B53277011F024A", "C88D42A1B0D5FDB36EFE2017", "2C406A22636D058851DEA8D2", "8FAA322495A1C4B34EFF3A62", "1A6FCC4453920B0AF3E6B5F5", "444FC942311F568DEFF506D7", "B7B0473383547E84E1DA8324", "2518D38C346C889E2AA57E5E", "B8C45A0B573EDD38B6EE7098", "E6775B1FE8792A5820DA8BD3", "845C8DCC94079575CB32CD74", "AAF65FC5E0BA4616982F826C", "FDFD7A0B57DFC662E628D6E1", "BF1EA6BDF90B0BF14DB946B5", "249ECFCC46E9F135B4CC1728", "CEE66BDB9FEE000D8C2DCFEF", "3D1325F0E591CDB6AE694ACC", "80AFEB987FBCA3ADED057E90", "E33CD05D02C691CDD00580EB", "3AC889125FFF8E69AD117E52", "C738A7BB0E3D2537D9A98BA6", "41534BE85A9EAB9CB514ED9C", "6CE43199A0A68E71F1AA0BF0", "A0F3ECB1BD6850E7749A2EA6", "EAA2B6E0BC6DAB8AD1F476B9", "916CFC1D156B14ED0E1B7835", "97369098EEE90A6D4577A9D7", "252D773CD7BE7484394914B3", "950811C434ABA3288EA8C862",);
+			"runOnlyForDeploymentPostprocessing" = 0;
+		};
+		"08188C65C8E1F28E63ED2657" = {
+			"isa" = "PBXFrameworksBuildPhase";
+			"buildActionMask" = 2147483647;
+			"files" = ("6411701C4B7DBDE8FB1D1734", "EEF1D9DF5E664107DD866452", "0AF28EABAD96E0B2C46EE353", "E3D079B2A8FF5A89A0E081CB", "A099F9C9E5DAC8F9CD157DB0", "F8E461C99FB18788E519DE3E",);
+			"runOnlyForDeploymentPostprocessing" = 0;
+		};
+		"6586D27D47FDF78224D72B9B" = {
+			"isa" = "PBXResourcesBuildPhase";
+			"buildActionMask" = 2147483647;
+			"files" = ();
+			"runOnlyForDeploymentPostprocessing" = 0;
+		};
+		"32FDA451ECCEC7529D7EE91F" = {
+			"isa" = "PBXContainerItemProxy";
+			"containerPortal" = "985959785319747668373CC6";
+			"proxyType" = 1;
+			"remoteGlobalIDString" = "FE32E92B151026F14A5BC8BB";
+			"remoteInfo" = "Tapito";
+		};
+		"AE96073346EC4B3019841A4B" = {
+			"isa" = "PBXTargetDependency";
+			"target" = "FE32E92B151026F14A5BC8BB";
+			"targetProxy" = "32FDA451ECCEC7529D7EE91F";
+		};
+		"14AB6377B64A0684FFEE19B6" = {
+			"isa" = "XCBuildConfiguration";
+			"name" = "Debug";
+			"buildSettings" = {
+				"PRODUCT_NAME" = "$(TARGET_NAME)";
+				"PRODUCT_BUNDLE_IDENTIFIER" = "com.y175.tapito.TapitoTests";
+				"CODE_SIGN_STYLE" = "Automatic";
+				"DEVELOPMENT_TEAM" = "";
+				"GENERATE_INFOPLIST_FILE" = "YES";
+				"TARGETED_DEVICE_FAMILY" = "1,2";
+				"SUPPORTED_PLATFORMS" = "iphoneos iphonesimulator";
+				"SUPPORTS_MACCATALYST" = "NO";
+				"MARKETING_VERSION" = "0.1.0";
+				"CURRENT_PROJECT_VERSION" = "1";
+				"LD_RUNPATH_SEARCH_PATHS" = ("$(inherited)", "@executable_path/Frameworks",);
+				"TEST_HOST" = "$(BUILT_PRODUCTS_DIR)/Tapito.app/Tapito";
+				"BUNDLE_LOADER" = "$(TEST_HOST)";
+				"HEADER_SEARCH_PATHS" = ("$(inherited)", "$(SRCROOT)/../ncm-dev/TapitoNCM/Sources/CNCMBackend/include",);
+				"SWIFT_OPTIMIZATION_LEVEL" = "-Onone";
+				"ONLY_ACTIVE_ARCH" = "YES";
+				"ENABLE_TESTABILITY" = "YES";
+				"SWIFT_ACTIVE_COMPILATION_CONDITIONS" = "DEBUG $(inherited)";
+			};
+		};
+		"CA04803DB30CD48ACB4D058B" = {
+			"isa" = "XCBuildConfiguration";
+			"name" = "Release";
+			"buildSettings" = {
+				"PRODUCT_NAME" = "$(TARGET_NAME)";
+				"PRODUCT_BUNDLE_IDENTIFIER" = "com.y175.tapito.TapitoTests";
+				"CODE_SIGN_STYLE" = "Automatic";
+				"DEVELOPMENT_TEAM" = "";
+				"GENERATE_INFOPLIST_FILE" = "YES";
+				"TARGETED_DEVICE_FAMILY" = "1,2";
+				"SUPPORTED_PLATFORMS" = "iphoneos iphonesimulator";
+				"SUPPORTS_MACCATALYST" = "NO";
+				"MARKETING_VERSION" = "0.1.0";
+				"CURRENT_PROJECT_VERSION" = "1";
+				"LD_RUNPATH_SEARCH_PATHS" = ("$(inherited)", "@executable_path/Frameworks",);
+				"TEST_HOST" = "$(BUILT_PRODUCTS_DIR)/Tapito.app/Tapito";
+				"BUNDLE_LOADER" = "$(TEST_HOST)";
+				"HEADER_SEARCH_PATHS" = ("$(inherited)", "$(SRCROOT)/../ncm-dev/TapitoNCM/Sources/CNCMBackend/include",);
+				"SWIFT_OPTIMIZATION_LEVEL" = "-O";
+				"ONLY_ACTIVE_ARCH" = "NO";
+			};
+		};
+		"9A777C5C03696D83DB712FD9" = {
+			"isa" = "XCConfigurationList";
+			"buildConfigurations" = ("14AB6377B64A0684FFEE19B6", "CA04803DB30CD48ACB4D058B",);
+			"defaultConfigurationIsVisible" = 0;
+			"defaultConfigurationName" = "Release";
+		};
+		"E3C9433515C29A5D65E29FB6" = {
+			"isa" = "PBXNativeTarget";
+			"name" = "TapitoTests";
+			"productName" = "TapitoTests";
+			"productReference" = "A88A3A16A9CB6F78470F0D5C";
+			"productType" = "com.apple.product-type.bundle.unit-test";
+			"buildConfigurationList" = "9A777C5C03696D83DB712FD9";
+			"buildPhases" = ("50C01EBCC5D7FF90B4B736A8", "08188C65C8E1F28E63ED2657", "6586D27D47FDF78224D72B9B",);
+			"buildRules" = ();
+			"dependencies" = ("AE96073346EC4B3019841A4B",);
+			"packageProductDependencies" = ("2DCA0C441CD934C94A8199DA", "66FC8CD8AE796F4B4EAE35F9", "37189DD8C387FB31A00B2391", "DD9BFC744E13250D2318A379", "4B5427EDA0625DB1CDB5DF75", "F57E175FC1709C1F988BE254",);
+		};
+		"E8A0D00A42045BF58010B933" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "TapitoUITests/AttachmentPickerUITests.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"C9A5D7C9637BAE9E1E8D30A0" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "E8A0D00A42045BF58010B933";
+		};
+		"98B9CB241D76A5A0D1824427" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "TapitoUITests/ComposerUITests.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"6E1FFE97C1173349C1F0B866" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "98B9CB241D76A5A0D1824427";
+		};
+		"52375FE6926637CF4FC7CD5F" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "TapitoUITests/ConversationUITests.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"0D9C8682B6A82BD83FCFF251" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "52375FE6926637CF4FC7CD5F";
+		};
+		"9D3F41DE37F151D3A20132D9" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "TapitoUITests/ImageHistoryUITests.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"4DCD46972398ADE88CBC3BA3" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "9D3F41DE37F151D3A20132D9";
+		};
+		"589D792D25EFC6FBAD4BE6FA" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "TapitoUITests/ReasoningUITests.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"E46D67F584A2A840975685CE" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "589D792D25EFC6FBAD4BE6FA";
+		};
+		"C317402920D8C5187DBF00B7" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "TapitoUITests/SkillUITests.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"F6A318D91BB1F32D63FE9273" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "C317402920D8C5187DBF00B7";
+		};
+		"88837D1FE6C1A10C58D7D9C2" = {
+			"isa" = "PBXGroup";
+			"name" = "TapitoUITests";
+			"children" = ("E8A0D00A42045BF58010B933", "98B9CB241D76A5A0D1824427", "52375FE6926637CF4FC7CD5F", "9D3F41DE37F151D3A20132D9", "589D792D25EFC6FBAD4BE6FA", "C317402920D8C5187DBF00B7",);
+			"sourceTree" = "<group>";
+		};
+		"92D210EB48901E3E43C3011F" = {
+			"isa" = "PBXFileReference";
+			"explicitFileType" = "wrapper.cfbundle";
+			"includeInIndex" = 0;
+			"path" = "TapitoUITests.xctest";
+			"sourceTree" = "BUILT_PRODUCTS_DIR";
+		};
+		"8A42802038E72B64AC6CC4DE" = {
+			"isa" = "PBXSourcesBuildPhase";
+			"buildActionMask" = 2147483647;
+			"files" = ("C9A5D7C9637BAE9E1E8D30A0", "6E1FFE97C1173349C1F0B866", "0D9C8682B6A82BD83FCFF251", "4DCD46972398ADE88CBC3BA3", "E46D67F584A2A840975685CE", "F6A318D91BB1F32D63FE9273",);
+			"runOnlyForDeploymentPostprocessing" = 0;
+		};
+		"23B1691E262673DB59C32E90" = {
+			"isa" = "PBXFrameworksBuildPhase";
+			"buildActionMask" = 2147483647;
+			"files" = ();
+			"runOnlyForDeploymentPostprocessing" = 0;
+		};
+		"9067E89E1C4AE8EFAC07D966" = {
+			"isa" = "PBXResourcesBuildPhase";
+			"buildActionMask" = 2147483647;
+			"files" = ();
+			"runOnlyForDeploymentPostprocessing" = 0;
+		};
+		"817774F927C361EE5DBFBD33" = {
+			"isa" = "PBXContainerItemProxy";
+			"containerPortal" = "985959785319747668373CC6";
+			"proxyType" = 1;
+			"remoteGlobalIDString" = "FE32E92B151026F14A5BC8BB";
+			"remoteInfo" = "Tapito";
+		};
+		"3A9F72AA841916C510C92F5F" = {
+			"isa" = "PBXTargetDependency";
+			"target" = "FE32E92B151026F14A5BC8BB";
+			"targetProxy" = "817774F927C361EE5DBFBD33";
+		};
+		"4C7A19EB2133A9A2B8AD9118" = {
+			"isa" = "XCBuildConfiguration";
+			"name" = "Debug";
+			"buildSettings" = {
+				"PRODUCT_NAME" = "$(TARGET_NAME)";
+				"PRODUCT_BUNDLE_IDENTIFIER" = "com.y175.tapito.TapitoUITests";
+				"CODE_SIGN_STYLE" = "Automatic";
+				"DEVELOPMENT_TEAM" = "";
+				"GENERATE_INFOPLIST_FILE" = "YES";
+				"TARGETED_DEVICE_FAMILY" = "1,2";
+				"SUPPORTED_PLATFORMS" = "iphoneos iphonesimulator";
+				"SUPPORTS_MACCATALYST" = "NO";
+				"MARKETING_VERSION" = "0.1.0";
+				"CURRENT_PROJECT_VERSION" = "1";
+				"LD_RUNPATH_SEARCH_PATHS" = ("$(inherited)", "@executable_path/Frameworks",);
+				"TEST_TARGET_NAME" = "Tapito";
+				"SWIFT_OPTIMIZATION_LEVEL" = "-Onone";
+				"ONLY_ACTIVE_ARCH" = "YES";
+				"ENABLE_TESTABILITY" = "YES";
+				"SWIFT_ACTIVE_COMPILATION_CONDITIONS" = "DEBUG $(inherited)";
+			};
+		};
+		"B16FCB8A80C25CBF8235D664" = {
+			"isa" = "XCBuildConfiguration";
+			"name" = "Release";
+			"buildSettings" = {
+				"PRODUCT_NAME" = "$(TARGET_NAME)";
+				"PRODUCT_BUNDLE_IDENTIFIER" = "com.y175.tapito.TapitoUITests";
+				"CODE_SIGN_STYLE" = "Automatic";
+				"DEVELOPMENT_TEAM" = "";
+				"GENERATE_INFOPLIST_FILE" = "YES";
+				"TARGETED_DEVICE_FAMILY" = "1,2";
+				"SUPPORTED_PLATFORMS" = "iphoneos iphonesimulator";
+				"SUPPORTS_MACCATALYST" = "NO";
+				"MARKETING_VERSION" = "0.1.0";
+				"CURRENT_PROJECT_VERSION" = "1";
+				"LD_RUNPATH_SEARCH_PATHS" = ("$(inherited)", "@executable_path/Frameworks",);
+				"TEST_TARGET_NAME" = "Tapito";
+				"SWIFT_OPTIMIZATION_LEVEL" = "-O";
+				"ONLY_ACTIVE_ARCH" = "NO";
+			};
+		};
+		"BB66D5AAB00D98338E3E871B" = {
+			"isa" = "XCConfigurationList";
+			"buildConfigurations" = ("4C7A19EB2133A9A2B8AD9118", "B16FCB8A80C25CBF8235D664",);
+			"defaultConfigurationIsVisible" = 0;
+			"defaultConfigurationName" = "Release";
+		};
+		"C83D13602E18DE0A87DB0556" = {
+			"isa" = "PBXNativeTarget";
+			"name" = "TapitoUITests";
+			"productName" = "TapitoUITests";
+			"productReference" = "92D210EB48901E3E43C3011F";
+			"productType" = "com.apple.product-type.bundle.ui-testing";
+			"buildConfigurationList" = "BB66D5AAB00D98338E3E871B";
+			"buildPhases" = ("8A42802038E72B64AC6CC4DE", "23B1691E262673DB59C32E90", "9067E89E1C4AE8EFAC07D966",);
+			"buildRules" = ();
+			"dependencies" = ("3A9F72AA841916C510C92F5F",);
+			"packageProductDependencies" = ();
+		};
+		"7EA0184D86854282C797E61E" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Shared/AgentActivityAttributes.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"12F6793D91B885A524DA2D61" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "7EA0184D86854282C797E61E";
+		};
+		"BD2D2C9B16DA5060496B2F66" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Shared/AppIdentity.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"0D8AA0F228DBC6ED156EBE5D" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "BD2D2C9B16DA5060496B2F66";
+		};
+		"DD799CCF6636746BCAC09EA3" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Shared/EndVoiceSessionIntent.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"E7509478BD288AE6AE6FC461" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "DD799CCF6636746BCAC09EA3";
+		};
+		"B8282AD61FABD668FC387FB4" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Shared/IslandPresentationProbe.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"9B12B89ACE67653D04157101" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "B8282AD61FABD668FC387FB4";
+		};
+		"2971891BFAB2452E04383982" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "Shared/StartVoiceTaskIntent.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"F94883CCD2BFE1B5AE9A1F7C" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "2971891BFAB2452E04383982";
+		};
+		"D7D9F5D07D25C0B804A4EDB6" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "TapitoLiveActivity/IslandPresentationProbeWidget.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"A131A732C24640C84EA1FE67" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "D7D9F5D07D25C0B804A4EDB6";
+		};
+		"0821EAEF52BB6119964F33A4" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "TapitoLiveActivity/TapitoLiveActivity.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"296D05C6782314673121106F" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "0821EAEF52BB6119964F33A4";
+		};
+		"F53AF46F478EB212E8235849" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "text.json.xcstrings";
+			"path" = "TapitoLiveActivity/InfoPlist.xcstrings";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"3E36816373754E0524C5BB38" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "F53AF46F478EB212E8235849";
+		};
+		"86423DE7E4D1238487777A7E" = {
+			"isa" = "PBXGroup";
+			"name" = "TapitoLiveActivity";
+			"children" = ("7EA0184D86854282C797E61E", "BD2D2C9B16DA5060496B2F66", "DD799CCF6636746BCAC09EA3", "B8282AD61FABD668FC387FB4", "2971891BFAB2452E04383982", "D7D9F5D07D25C0B804A4EDB6", "0821EAEF52BB6119964F33A4", "F53AF46F478EB212E8235849",);
+			"sourceTree" = "<group>";
+		};
+		"F5923AE992F42825D29035A4" = {
+			"isa" = "PBXFileReference";
+			"explicitFileType" = "wrapper.cfbundle";
+			"includeInIndex" = 0;
+			"path" = "TapitoLiveActivity.appex";
+			"sourceTree" = "BUILT_PRODUCTS_DIR";
+		};
+		"1B163C23B969BE30B7C7316F" = {
+			"isa" = "PBXSourcesBuildPhase";
+			"buildActionMask" = 2147483647;
+			"files" = ("12F6793D91B885A524DA2D61", "0D8AA0F228DBC6ED156EBE5D", "E7509478BD288AE6AE6FC461", "9B12B89ACE67653D04157101", "F94883CCD2BFE1B5AE9A1F7C", "A131A732C24640C84EA1FE67", "296D05C6782314673121106F",);
+			"runOnlyForDeploymentPostprocessing" = 0;
+		};
+		"CDE1A52459D6E1D0A5E14896" = {
+			"isa" = "PBXFrameworksBuildPhase";
+			"buildActionMask" = 2147483647;
+			"files" = ();
+			"runOnlyForDeploymentPostprocessing" = 0;
+		};
+		"B2DFB610AE9D86D66156AAAF" = {
+			"isa" = "PBXResourcesBuildPhase";
+			"buildActionMask" = 2147483647;
+			"files" = ("3E36816373754E0524C5BB38",);
+			"runOnlyForDeploymentPostprocessing" = 0;
+		};
+		"CD582443ACFCC347B5C3CE6B" = {
+			"isa" = "XCBuildConfiguration";
+			"name" = "Debug";
+			"buildSettings" = {
+				"PRODUCT_NAME" = "$(TARGET_NAME)";
+				"PRODUCT_BUNDLE_IDENTIFIER" = "com.y175.tapito.LiveActivity";
+				"CODE_SIGN_STYLE" = "Automatic";
+				"DEVELOPMENT_TEAM" = "";
+				"GENERATE_INFOPLIST_FILE" = "YES";
+				"TARGETED_DEVICE_FAMILY" = "1,2";
+				"SUPPORTED_PLATFORMS" = "iphoneos iphonesimulator";
+				"SUPPORTS_MACCATALYST" = "NO";
+				"MARKETING_VERSION" = "0.1.0";
+				"CURRENT_PROJECT_VERSION" = "1";
+				"LD_RUNPATH_SEARCH_PATHS" = ("$(inherited)", "@executable_path/Frameworks", "@executable_path/../../Frameworks",);
+				"INFOPLIST_FILE" = "TapitoLiveActivity/Info.plist";
+				"INFOPLIST_KEY_CFBundleDisplayName" = "$(APP_DISPLAY_NAME)";
+				"APPLICATION_EXTENSION_API_ONLY" = "YES";
+				"SKIP_INSTALL" = "YES";
+				"SWIFT_OPTIMIZATION_LEVEL" = "-Onone";
+				"ONLY_ACTIVE_ARCH" = "YES";
+				"ENABLE_TESTABILITY" = "YES";
+				"SWIFT_ACTIVE_COMPILATION_CONDITIONS" = "DEBUG $(inherited)";
+			};
+		};
+		"37364C1C094223206EB246CD" = {
+			"isa" = "XCBuildConfiguration";
+			"name" = "Release";
+			"buildSettings" = {
+				"PRODUCT_NAME" = "$(TARGET_NAME)";
+				"PRODUCT_BUNDLE_IDENTIFIER" = "com.y175.tapito.LiveActivity";
+				"CODE_SIGN_STYLE" = "Automatic";
+				"DEVELOPMENT_TEAM" = "";
+				"GENERATE_INFOPLIST_FILE" = "YES";
+				"TARGETED_DEVICE_FAMILY" = "1,2";
+				"SUPPORTED_PLATFORMS" = "iphoneos iphonesimulator";
+				"SUPPORTS_MACCATALYST" = "NO";
+				"MARKETING_VERSION" = "0.1.0";
+				"CURRENT_PROJECT_VERSION" = "1";
+				"LD_RUNPATH_SEARCH_PATHS" = ("$(inherited)", "@executable_path/Frameworks", "@executable_path/../../Frameworks",);
+				"INFOPLIST_FILE" = "TapitoLiveActivity/Info.plist";
+				"INFOPLIST_KEY_CFBundleDisplayName" = "$(APP_DISPLAY_NAME)";
+				"APPLICATION_EXTENSION_API_ONLY" = "YES";
+				"SKIP_INSTALL" = "YES";
+				"SWIFT_OPTIMIZATION_LEVEL" = "-O";
+				"ONLY_ACTIVE_ARCH" = "NO";
+			};
+		};
+		"563C355D384B617768BAA548" = {
+			"isa" = "XCConfigurationList";
+			"buildConfigurations" = ("CD582443ACFCC347B5C3CE6B", "37364C1C094223206EB246CD",);
+			"defaultConfigurationIsVisible" = 0;
+			"defaultConfigurationName" = "Release";
+		};
+		"DB926EB8872CD9020C30A714" = {
+			"isa" = "PBXNativeTarget";
+			"name" = "TapitoLiveActivity";
+			"productName" = "TapitoLiveActivity";
+			"productReference" = "F5923AE992F42825D29035A4";
+			"productType" = "com.apple.product-type.app-extension";
+			"buildConfigurationList" = "563C355D384B617768BAA548";
+			"buildPhases" = ("1B163C23B969BE30B7C7316F", "CDE1A52459D6E1D0A5E14896", "B2DFB610AE9D86D66156AAAF",);
+			"buildRules" = ();
+			"dependencies" = ();
+			"packageProductDependencies" = ();
+		};
+		"B93BC5D03A8BB474E37E55A3" = {
+			"isa" = "PBXFileReference";
+			"lastKnownFileType" = "sourcecode.swift";
+			"path" = "TapitoLoopbackTunnel/PacketTunnelProvider.swift";
+			"sourceTree" = "SOURCE_ROOT";
+		};
+		"6B17A45D64904E6F9CE440F6" = {
+			"isa" = "PBXBuildFile";
+			"fileRef" = "B93BC5D03A8BB474E37E55A3";
+		};
+		"13C4D837AE3D31E69E39219D" = {
+			"isa" = "PBXGroup";
+			"name" = "TapitoLoopbackTunnel";
+			"children" = ("B93BC5D03A8BB474E37E55A3",);
+			"sourceTree" = "<group>";
+		};
+		"14542D5537CC01B573CC32AE" = {
+			"isa" = "PBXFileReference";
+			"explicitFileType" = "wrapper.cfbundle";
+			"includeInIndex" = 0;
+			"path" = "TapitoLoopbackTunnel.appex";
+			"sourceTree" = "BUILT_PRODUCTS_DIR";
+		};
+		"B03FDA76FEF554A278273534" = {
+			"isa" = "XCSwiftPackageProductDependency";
+			"package" = "245C0B7B5AC8181B3947183C";
+			"productName" = "TapitoConnectionKit";
+		};
+		"DF974BBFC64060E2EFCA5D70" = {
+			"isa" = "PBXBuildFile";
+			"productRef" = "B03FDA76FEF554A278273534";
+		};
+		"3F86B4B63907C17D150D505A" = {
+			"isa" = "PBXSourcesBuildPhase";
+			"buildActionMask" = 2147483647;
+			"files" = ("6B17A45D64904E6F9CE440F6",);
+			"runOnlyForDeploymentPostprocessing" = 0;
+		};
+		"BA1CA25D32150ACBFB7C18DE" = {
+			"isa" = "PBXFrameworksBuildPhase";
+			"buildActionMask" = 2147483647;
+			"files" = ("DF974BBFC64060E2EFCA5D70",);
+			"runOnlyForDeploymentPostprocessing" = 0;
+		};
+		"1A965878614F645198817CE2" = {
+			"isa" = "PBXResourcesBuildPhase";
+			"buildActionMask" = 2147483647;
+			"files" = ();
+			"runOnlyForDeploymentPostprocessing" = 0;
+		};
+		"7701C2617E80FC66B0B09366" = {
+			"isa" = "XCBuildConfiguration";
+			"name" = "Debug";
+			"buildSettings" = {
+				"PRODUCT_NAME" = "$(TARGET_NAME)";
+				"PRODUCT_BUNDLE_IDENTIFIER" = "com.y175.tapito.LoopbackTunnel";
+				"CODE_SIGN_STYLE" = "Automatic";
+				"DEVELOPMENT_TEAM" = "";
+				"GENERATE_INFOPLIST_FILE" = "YES";
+				"TARGETED_DEVICE_FAMILY" = "1,2";
+				"SUPPORTED_PLATFORMS" = "iphoneos iphonesimulator";
+				"SUPPORTS_MACCATALYST" = "NO";
+				"MARKETING_VERSION" = "0.1.0";
+				"CURRENT_PROJECT_VERSION" = "1";
+				"LD_RUNPATH_SEARCH_PATHS" = ("$(inherited)", "@executable_path/Frameworks", "@executable_path/../../Frameworks",);
+				"INFOPLIST_FILE" = "TapitoLoopbackTunnel/Info.plist";
+				"CODE_SIGN_ENTITLEMENTS" = "TapitoLoopbackTunnel/TapitoLoopbackTunnel.entitlements";
+				"INFOPLIST_KEY_CFBundleDisplayName" = "Tapito 本机连接";
+				"APPLICATION_EXTENSION_API_ONLY" = "YES";
+				"SKIP_INSTALL" = "YES";
+				"SWIFT_OPTIMIZATION_LEVEL" = "-Onone";
+				"ONLY_ACTIVE_ARCH" = "YES";
+				"ENABLE_TESTABILITY" = "YES";
+				"SWIFT_ACTIVE_COMPILATION_CONDITIONS" = "DEBUG $(inherited)";
+			};
+		};
+		"0F767F2DC85189E0983E2942" = {
+			"isa" = "XCBuildConfiguration";
+			"name" = "Release";
+			"buildSettings" = {
+				"PRODUCT_NAME" = "$(TARGET_NAME)";
+				"PRODUCT_BUNDLE_IDENTIFIER" = "com.y175.tapito.LoopbackTunnel";
+				"CODE_SIGN_STYLE" = "Automatic";
+				"DEVELOPMENT_TEAM" = "";
+				"GENERATE_INFOPLIST_FILE" = "YES";
+				"TARGETED_DEVICE_FAMILY" = "1,2";
+				"SUPPORTED_PLATFORMS" = "iphoneos iphonesimulator";
+				"SUPPORTS_MACCATALYST" = "NO";
+				"MARKETING_VERSION" = "0.1.0";
+				"CURRENT_PROJECT_VERSION" = "1";
+				"LD_RUNPATH_SEARCH_PATHS" = ("$(inherited)", "@executable_path/Frameworks", "@executable_path/../../Frameworks",);
+				"INFOPLIST_FILE" = "TapitoLoopbackTunnel/Info.plist";
+				"CODE_SIGN_ENTITLEMENTS" = "TapitoLoopbackTunnel/TapitoLoopbackTunnel.entitlements";
+				"INFOPLIST_KEY_CFBundleDisplayName" = "Tapito 本机连接";
+				"APPLICATION_EXTENSION_API_ONLY" = "YES";
+				"SKIP_INSTALL" = "YES";
+				"SWIFT_OPTIMIZATION_LEVEL" = "-O";
+				"ONLY_ACTIVE_ARCH" = "NO";
+			};
+		};
+		"DD02EEBAFAF53119490D43B0" = {
+			"isa" = "XCConfigurationList";
+			"buildConfigurations" = ("7701C2617E80FC66B0B09366", "0F767F2DC85189E0983E2942",);
+			"defaultConfigurationIsVisible" = 0;
+			"defaultConfigurationName" = "Release";
+		};
+		"CA962AEF2103A8D718415D13" = {
+			"isa" = "PBXNativeTarget";
+			"name" = "TapitoLoopbackTunnel";
+			"productName" = "TapitoLoopbackTunnel";
+			"productReference" = "14542D5537CC01B573CC32AE";
+			"productType" = "com.apple.product-type.app-extension";
+			"buildConfigurationList" = "DD02EEBAFAF53119490D43B0";
+			"buildPhases" = ("3F86B4B63907C17D150D505A", "BA1CA25D32150ACBFB7C18DE", "1A965878614F645198817CE2",);
+			"buildRules" = ();
+			"dependencies" = ();
+			"packageProductDependencies" = ("B03FDA76FEF554A278273534",);
+		};
+		"4EDC8BFAFC6BD936B849F38C" = {
+			"isa" = "PBXGroup";
+			"name" = "Products";
+			"children" = ("332EE9616E1061799D85A1FD", "A88A3A16A9CB6F78470F0D5C", "92D210EB48901E3E43C3011F", "F5923AE992F42825D29035A4", "14542D5537CC01B573CC32AE",);
+			"sourceTree" = "<group>";
+		};
+		"1E7EC68E24D28B488C4B3DFC" = {
+			"isa" = "PBXGroup";
+			"children" = ("43BF19C26C049EEADB3EDE00", "B7D51D47366E65E9057B4781", "88837D1FE6C1A10C58D7D9C2", "86423DE7E4D1238487777A7E", "13C4D837AE3D31E69E39219D", "4EDC8BFAFC6BD936B849F38C",);
+			"sourceTree" = "<group>";
+		};
+		"433548979C024CC63B5F3B8D" = {
+			"isa" = "XCBuildConfiguration";
+			"name" = "Debug";
+			"buildSettings" = {
+				"APP_DISPLAY_NAME" = "Tapito";
+				"SDKROOT" = "iphoneos";
+				"IPHONEOS_DEPLOYMENT_TARGET" = "27.0";
+				"SWIFT_VERSION" = "5.0";
+				"SWIFT_STRICT_CONCURRENCY" = "complete";
+				"CLANG_ENABLE_MODULES" = "YES";
+				"CLANG_ENABLE_OBJC_ARC" = "YES";
+				"GCC_C_LANGUAGE_STANDARD" = "gnu17";
+				"SWIFT_OPTIMIZATION_LEVEL" = "-Onone";
+				"ONLY_ACTIVE_ARCH" = "YES";
+				"ENABLE_TESTABILITY" = "YES";
+				"SWIFT_ACTIVE_COMPILATION_CONDITIONS" = "DEBUG $(inherited)";
+			};
+		};
+		"B800A40FDE6F0A0218D9BCD2" = {
+			"isa" = "XCBuildConfiguration";
+			"name" = "Release";
+			"buildSettings" = {
+				"APP_DISPLAY_NAME" = "Tapito";
+				"SDKROOT" = "iphoneos";
+				"IPHONEOS_DEPLOYMENT_TARGET" = "27.0";
+				"SWIFT_VERSION" = "5.0";
+				"SWIFT_STRICT_CONCURRENCY" = "complete";
+				"CLANG_ENABLE_MODULES" = "YES";
+				"CLANG_ENABLE_OBJC_ARC" = "YES";
+				"GCC_C_LANGUAGE_STANDARD" = "gnu17";
+				"SWIFT_OPTIMIZATION_LEVEL" = "-O";
+				"ONLY_ACTIVE_ARCH" = "NO";
+			};
+		};
+		"67F98A53B3601D59AC990BA8" = {
+			"isa" = "XCConfigurationList";
+			"buildConfigurations" = ("433548979C024CC63B5F3B8D", "B800A40FDE6F0A0218D9BCD2",);
+			"defaultConfigurationIsVisible" = 0;
+			"defaultConfigurationName" = "Release";
+		};
+		"985959785319747668373CC6" = {
+			"isa" = "PBXProject";
+			"attributes" = {
+				"LastUpgradeCheck" = "2700";
+				"BuildIndependentTargetsInParallel" = "YES";
+			};
+			"buildConfigurationList" = "67F98A53B3601D59AC990BA8";
+			"compatibilityVersion" = "Xcode 14.0";
+			"developmentRegion" = "en";
+			"knownRegions" = ("en", "zh-Hans", "Base",);
+			"mainGroup" = "1E7EC68E24D28B488C4B3DFC";
+			"productRefGroup" = "4EDC8BFAFC6BD936B849F38C";
+			"projectDirPath" = "";
+			"projectRoot" = "";
+			"targets" = ("FE32E92B151026F14A5BC8BB", "E3C9433515C29A5D65E29FB6", "C83D13602E18DE0A87DB0556", "DB926EB8872CD9020C30A714", "CA962AEF2103A8D718415D13",);
+			"packageReferences" = ("9F0AC23D4698CC02B51EE183", "DCE2077F5F9905FBF2775226", "0D177A3AC98D176BB4C8F56E", "4151D53966556EF834C59790", "245C0B7B5AC8181B3947183C", "2729DA436ECED6D502DFB3F3",);
+		};
+	};
+	"rootObject" = "985959785319747668373CC6";
+}

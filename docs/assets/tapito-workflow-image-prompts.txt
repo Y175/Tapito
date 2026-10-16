@@ -1,0 +1,108 @@
+Tapito workflow diagram generation record
+Date: 2026-10-16
+Mode: built-in image_gen (generation, followed by two targeted image edits)
+The built-in API does not expose a selectable model name. No specific image model version is asserted.
+
+--- Initial prompt ---
+Use case: infographic-diagram.
+Create one high-resolution Chinese engineering workflow infographic for the iPhone assistant Tapito. Portrait 3:4 or similar tall poster, preferably 2400px wide or higher if supported. This is a design document, not a product screenshot. Crisp flat vector-like shapes, white/off-white background, dark navy readable Chinese sans-serif text, generous spacing, thin precise directional connectors. No decorative futuristic scenery, no watermarks, no phone mockups, no tiny text. All text fully visible and not cropped.
+
+Title exactly: "Tapito · 程序编排与模型节点"
+Subtitle exactly: "正式流程设计 v1 · 设计稿，尚未实现"
+Small lead sentence: "程序推进步骤；模型仅在指定节点参与"
+
+Layout: left approximately 60% is a clean top-to-bottom execution flow, right approximately 40% is a column of seven prompt cards labeled M1–M7. The matching node IDs in flow and prompt cards must be unmistakable. All seven model roles must appear in the flow. Do not connect the right prompt cards with execution arrows: they annotate matching node IDs.
+Legend: blue = "程序执行", teal = "本地截图 / OCR", purple = "按需模型调用", orange = "异步学习模型", red = "停止 / 明确报错".
+
+LEFT FLOW with real directional arrows and clear decision labels:
+1 blue "任务入口" smaller "语音转文字 / 文字 / 快捷指令"
+↓ blue "P1 准备上下文" smaller "会话 · 能力 · 相关记忆 · 技能目录"
+↓ purple "M1 理解任务" smaller "自然语言解析；明确参数可跳过"
+↓ blue diamond "P2 选择执行路径"
+Three branches:
+- "普通问答" goes to M5 answer node near bottom, bypassing all device operations.
+- "已有流程" goes to blue "P3 加载固定版本流程"
+- "未知任务" goes to purple "M2 受限规划", then blue "校验结构与参数", then P3.
+↓ from P3 blue "P4 执行当前节点"
+Below a framed teal observation section titled "节点声明观察策略", containing three ALTERNATIVE parallel options, not a mandatory serial ladder:
+A teal "页面 / 目标特征匹配 → 本地执行"
+B teal "明确文字目标 → 本地 OCR"
+C purple "M3 页面判断" smaller "图标 / 歧义 / 复杂读取或核实"
+Then merge into blue "P5 校验并执行动作" smaller "权限 · 帧有效性 · 参数 · 动作回执"
+↓ blue diamond "P6 检查节点结果"
+- "通过，还有步骤" loops to P4
+- "页面偏离" branches to purple "M4 局部纠错", then "校验剩余步骤", loops to P4
+- "连接失败 / 结果未知" branches to red "停止并保存准确状态", with NO automatic return or retry arrow
+- "全部完成" goes to blue "P7 核实最终结果"
+↓ choice between blue "简单结果：程序直接回复" and purple "M5 回答 / 总结" smaller "普通问答或需要解释、比较、总结时"
+Then blue "P8 持久化任务与学习队列".
+A dashed boundary below labeled "异步区 · 不阻塞当前任务":
+dashed arrow from queue to two parallel orange nodes "M6 个人记忆整理" and "M7 操作技能学习".
+M6 → blue "来源与版本校验 → 写入记忆".
+M7 → blue "候选校验 → 审核发布 → 后续任务使用".
+Do NOT suggest every run must use all seven models. Direct successful paths must clearly skip M2, M3 and M4 when unnecessary.
+
+RIGHT PROMPT CARDS (Chinese text verbatim; each has role, trigger, and short prompt):
+"M1 任务理解"
+"触发：自然语言任务"
+"提示词：提取 App、操作与参数；缺失则澄清，不猜测。"
+"输出：任务结构 / 缺失信息"
+
+"M2 未知任务规划"
+"触发：没有匹配流程"
+"提示词：仅用允许节点规划步骤；给出前置与完成条件，不编造坐标。"
+"输出：受限步骤计划"
+
+"M3 页面判断"
+"触发：本地规则无法确定"
+"提示词：根据当前帧定位、读取或核实目标；返回证据，不确定就说明。"
+"输出：定位 / 内容 / 核实结果"
+
+"M4 局部纠错"
+"触发：页面偏离预期"
+"提示词：结合当前页面与动作回执，只修正剩余步骤；不重放结果未知的动作。"
+"输出：修正步骤 / 阻塞原因"
+
+"M5 回答与总结"
+"触发：问答或需要整理结果"
+"提示词：依据有效上下文或已核实结果回答；区分成功、失败与未确认。"
+"输出：用户可读答复"
+
+"M6 个人记忆整理"
+"触发：异步队列有新记录"
+"提示词：只提取用户明确表达的长期信息，引用原话；无价值则不新增。"
+"输出：记忆增量 / 无变化"
+
+"M7 操作技能学习"
+"触发：异步分析有效轨迹"
+"提示词：提炼可复用步骤、定位和校验条件；生成候选，不自行发布。"
+"输出：技能修订候选 / 拒绝原因"
+
+Footer exactly:
+"不是每轮调用全部模型节点。OCR 成功不必再问模型；动作送达不等于效果成功。"
+Second small footer:
+"完整提示词、输入输出与程序校验见配套文档 · 2026-10-16"
+
+Prioritize correct graph logic, readable text, stable exact M1-M7 IDs, and clean professional information architecture. The graph is a program-controlled workflow with conditional model nodes; do not portray it as an always-on multi-agent swarm.
+
+--- Technical correction prompt ---
+Edit the attached Tapito workflow diagram. Preserve the title, visual style, readability, all seven right-hand prompt cards M1-M7 and their Chinese wording, all flow content above P6, and the asynchronous M6/M7 section. Correct the left-hand flow below P6; this is a technical correctness edit. Do not connect failures back to execution. Do not connect repair directly to final verification.
+Exact directed transitions required:
+P6 检查节点结果 has FOUR mutually exclusive branches:
+1. 通过，仍有步骤 -> a blue node reading "继续执行 → 回到 P4". This is the ONLY normal repeat path.
+2. 全部步骤完成 -> P7 核实最终结果 -> 简单结果：程序直接回复 OR M5 回答 / 总结 -> P8 持久化任务与学习队列.
+3. 页面偏离 -> M4 局部纠错 -> a blue node reading "校验剩余步骤，通过后回到 P4". It MUST NOT go to P7. If graph space is tight use explicit "回到 P4" text and a connector marker, rather than long crossing arrows.
+4. 连接失败 / 结果未知 -> red terminal reading "停止并保存准确状态". This red terminal MUST HAVE NO OUTGOING ARROWS TO ANY EXECUTION NODE. It must visually end this branch. Record the failure, never auto retry.
+Remove the existing long rightmost loop beside P6 which currently appears to return the red stop branch to P4. Remove the existing arrow from the correction-validation box to P7.
+The earlier 普通问答 branch -> M5 回答 / 总结 must connect to P8, or explicitly label it "答复后进入 P8"; it must not be dangling.
+For read-only M3 outputs, add a small annotation near P5: "只读节点跳过动作，直接校验". All existing blue/local execution, teal OCR, purple model, orange learning, red stop palette remains.
+If necessary reflow the lower-left area with more vertical space and slightly increase canvas height, keeping font size large enough. Use clean non-overlapping arrows, generous spacing. Strict technical meaning takes priority over compactness.
+This is still a design, not a claim of implementation. Keep "设计稿，尚未实现". No new model nodes. No made-up claims.
+
+--- Final connector cleanup prompt ---
+Make ONLY THREE precise line deletions in the attached diagram, preserving every box, every label, text, color and the whole right column. This is a technical diagram; remove erroneous connector lines. Do not draw replacement lines or move any boxes.
+1. Delete the downward arrow that exits the BOTTOM of the small blue box "继续执行 → 回到 P4" at approximately x=125,y=1168 and goes down into the purple "M5 回答 / 总结" box at x=125,y=1218. This arrow is WRONG. The blue continue box must have NO outgoing graphical arrow at all; its internal text "回到 P4" already specifies the return. Keep its incoming arrow from the branch "通过，仍有步骤". Keep the separate far-left vertical arrow at x≈65 for 普通问答 flowing into M5; that one is correct.
+2. Delete the entire dangling long return line on the LEFT of P4 / observation / P6, approximately x=96 from y=1012 up to y=663 and its horizontal arrow into P4. It has no valid origin. Do NOT touch the far-left 普通问答 line at x≈65.
+3. Delete the entire dangling long return line on the RIGHT of the observation section, approximately x=602 from y=1012 up to y=663 and its horizontal arrow into P4. It has no valid origin. The red stop node must remain a terminal.
+After edit: both blue boxes whose text says 回到 P4 have NO outgoing arrows; the red stop has NO outgoing arrows. P7 alone leads to simple result / M5 below it; the ordinary-chat M5 leads to "答复后进入 P8" then P8. Preserve all other arrows.
+Do not change anything else. Output the full corrected poster.

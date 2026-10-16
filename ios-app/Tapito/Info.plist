@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
+	</dict>
+	<key>BGTaskSchedulerPermittedIdentifiers</key>
+	<array>
+		<string>$(PRODUCT_BUNDLE_IDENTIFIER).backgroundRun.*</string>
+		<string>$(PRODUCT_BUNDLE_IDENTIFIER).pairing</string>
+	</array>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>com.y175.tapito.activity</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>tapito</string>
+			</array>
+		</dict>
+	</array>
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_remotepairing-pairable-host._tcp</string>
+		<string>_remotepairing._tcp</string>
+	</array>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Tapito 使用定位机制维持你发起的任务在后台执行，不保存或上传坐标；任务结束即停止定位。</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>允许 Tapito 从操作按钮启动任务后，在不打开界面、不占用麦克风或音频的情况下使用后台定位执行任务。任务结束即停止，不保存或上传坐标。</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>location</string>
+		<string>screen-capture</string>
+		<string>processing</string>
+		<string>audio</string>
+	</array>
+</dict>
+</plist>

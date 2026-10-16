@@ -1,0 +1,161 @@
+name: Tapito
+options:
+  bundleIdPrefix: com.y175.tapito
+  deploymentTarget:
+    iOS: '27.0'
+settings:
+  base:
+    GENERATE_INFOPLIST_FILE: YES
+    SWIFT_VERSION: '5.0'
+    SWIFT_STRICT_CONCURRENCY: complete
+    DEVELOPMENT_TEAM: ''
+    MARKETING_VERSION: '0.1.0'
+    CURRENT_PROJECT_VERSION: '1'
+  configs:
+    Debug:
+      ONLY_ACTIVE_ARCH: YES
+    Release:
+      ONLY_ACTIVE_ARCH: NO
+packages:
+  TapitoAgentKit:
+    path: TapitoAgentKit
+  TapitoVoiceKit:
+    path: TapitoVoiceKit
+  TapitoConnectionKit:
+    path: TapitoConnectionKit
+  SwiftAgentKit:
+    path: Vendor/SwiftAgentKit
+  ProviderKit:
+    path: ProviderKit
+  MarkdownUI:
+    url: https://github.com/gonzalezreal/swift-markdown-ui.git
+    exactVersion: 2.4.1
+targets:
+  Tapito:
+    type: application
+    platform: iOS
+    sources:
+      - Tapito
+      - path: Tapito/ConnectionResources
+        type: folder
+        buildPhase: resources
+      - Shared
+      - ../ncm-dev/TapitoNCM/Sources/TapitoNCM
+      - path: Licenses
+        type: folder
+        buildPhase: resources
+    settings:
+      base:
+        ARCHS: arm64
+        CODE_SIGN_ENTITLEMENTS: Tapito/Tapito.entitlements
+        ENABLE_USER_SCRIPT_SANDBOXING: NO
+        HEADER_SEARCH_PATHS: ['$(inherited)', '$(SRCROOT)/../ncm-dev/TapitoNCM/Sources/CNCMBackend/include']
+        OTHER_LDFLAGS: ['$(inherited)', '-ltapito_ncm_backend', '-framework', 'Security', '-framework', 'SystemConfiguration']
+        'LIBRARY_SEARCH_PATHS[sdk=iphoneos*]': ['$(inherited)', '$(SRCROOT)/../.build/ncm-rust/aarch64-apple-ios/release']
+        'LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*]': ['$(inherited)', '$(SRCROOT)/../.build/ncm-rust/aarch64-apple-ios-sim/release']
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        PRODUCT_BUNDLE_IDENTIFIER: com.y175.tapito
+        INFOPLIST_FILE: Tapito/Info.plist
+        GENERATE_INFOPLIST_FILE: YES
+        SWIFT_ACTIVE_COMPILATION_CONDITIONS: '$(inherited) TAPITO_APP'
+        INFOPLIST_KEY_CFBundleDisplayName: Tapito
+        INFOPLIST_KEY_NSSupportsLiveActivities: YES
+        INFOPLIST_KEY_NSLocalNetworkUsageDescription: Connect to your explicitly paired development bridge while this app is open.
+        INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
+        INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents: YES
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        TARGETED_DEVICE_FAMILY: '1,2'
+    preBuildScripts:
+      - name: Build NCM backend
+        basedOnDependencyAnalysis: false
+        script: |
+          case "$PLATFORM_NAME" in
+            iphoneos) mode=device ;;
+            iphonesimulator) mode=simulator ;;
+            *) exit 1 ;;
+          esac
+          bash "$SRCROOT/../tools/build_ncm_rust.sh" "$mode"
+    dependencies:
+      - target: TapitoLoopbackTunnel
+        embed: true
+      - package: TapitoConnectionKit
+      - package: TapitoVoiceKit
+        product: TapitoVoiceCore
+      - package: TapitoVoiceKit
+        product: TapitoVoiceAudio
+      - target: TapitoLiveActivity
+        embed: true
+      - package: TapitoAgentKit
+        product: TapitoAgentCore
+      - package: TapitoAgentKit
+        product: TapitoAgentSwiftAgentKit
+      - package: SwiftAgentKit
+        product: SwiftAgentKit
+      - package: ProviderKit
+        product: ProviderCore
+      - package: ProviderKit
+        product: OpenAIAdapter
+      - package: MarkdownUI
+        product: MarkdownUI
+  TapitoLoopbackTunnel:
+    type: app-extension
+    platform: iOS
+    sources: [TapitoLoopbackTunnel]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.y175.tapito.LoopbackTunnel
+        INFOPLIST_FILE: TapitoLoopbackTunnel/Info.plist
+        CODE_SIGN_ENTITLEMENTS: TapitoLoopbackTunnel/TapitoLoopbackTunnel.entitlements
+        INFOPLIST_KEY_CFBundleDisplayName: Tapito 本机连接
+        APPLICATION_EXTENSION_API_ONLY: YES
+        SKIP_INSTALL: YES
+    dependencies:
+      - package: TapitoConnectionKit
+  TapitoLiveActivity:
+    type: app-extension
+    platform: iOS
+    sources: [TapitoLiveActivity, Shared]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.y175.tapito.LiveActivity
+        INFOPLIST_FILE: TapitoLiveActivity/Info.plist
+        INFOPLIST_KEY_CFBundleDisplayName: Tapito
+        APPLICATION_EXTENSION_API_ONLY: YES
+        SKIP_INSTALL: YES
+  TapitoTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources: [TapitoTests]
+    settings:
+      base:
+        HEADER_SEARCH_PATHS: ['$(inherited)', '$(SRCROOT)/../ncm-dev/TapitoNCM/Sources/CNCMBackend/include']
+    dependencies:
+      - target: Tapito
+      - package: TapitoAgentKit
+        product: TapitoAgentCore
+      - package: TapitoAgentKit
+        product: TapitoAgentSwiftAgentKit
+      - package: SwiftAgentKit
+        product: SwiftAgentKit
+      - package: ProviderKit
+        product: ProviderCore
+      - package: ProviderKit
+        product: OpenAIAdapter
+  TapitoUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources: [TapitoUITests]
+    settings:
+      base:
+        TEST_TARGET_NAME: Tapito
+    dependencies:
+      - target: Tapito
+schemes:
+  Tapito:
+    build:
+      targets:
+        Tapito: all
+    test:
+      targets: [TapitoTests, TapitoUITests]
+      environmentVariables:
+        TAPITO_ISOLATED_TESTS: '1'
