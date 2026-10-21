@@ -85,7 +85,7 @@ If you change the bundle ID, signing team or Intent parameters, regenerate and s
 
 **The main model owns the task. Code executes tools and returns evidence.** Tapito uses a ReAct-style tool-call loop; skills provide app knowledge rather than a separate permission list.
 
-![Tapito execution flow: main-agent decisions, direct tools or Jev stage delegation, verification, and asynchronous learning](docs/assets/tapito-execution-flow-v4.png)
+![Tapito execution flow: main-agent decisions, direct tools or Jev stage delegation, verification, and asynchronous learning](docs/assets/tapito-execution-flow-v4-en.png)
 
 1. Assemble the request, valid conversation context, relevant memory and a catalog of skills/tools.
 2. Let the model load the common iOS skill and app-specific references as needed. Resolve apps from the installed-app catalog.
@@ -115,7 +115,7 @@ A matching learned operation can skip per-step OCR and model calls by checking c
 
 ## Architecture
 
-![Tapito architecture: independent agent core, shared skills and memory, model services, iOS execution, and local connection](docs/assets/tapito-architecture-v4.png)
+![Tapito architecture: independent agent core, shared skills and memory, model services, iOS execution, and local connection](docs/assets/tapito-architecture-v4-en.png)
 
 | Module | Responsibility |
 | --- | --- |

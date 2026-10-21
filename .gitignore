@@ -52,9 +52,11 @@ __pycache__/
 !/docs/assets/tapito-workflow-model-nodes-v1.png
 !/docs/assets/tapito-architecture-v2.png
 !/docs/assets/tapito-execution-flow-v2.png
-# Reviewed image2 diagrams used by both README languages.
+# Reviewed image2 diagrams, with separate English README editions.
 !/docs/assets/tapito-architecture-v4.png
 !/docs/assets/tapito-execution-flow-v4.png
+!/docs/assets/tapito-architecture-v4-en.png
+!/docs/assets/tapito-execution-flow-v4-en.png
 /ios-app/docs/**/*.png
 /ios-app/docs/**/*.jpg
 /archives/history/**/*.png

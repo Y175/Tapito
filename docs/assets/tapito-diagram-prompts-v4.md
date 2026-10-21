@@ -2,7 +2,7 @@
 
 日期：2026-10-21。
 
-使用内置 image_gen 工具生成与编辑；未使用 CLI 或自定义绘图脚本。两图为中英双语，共用于中英文 README。
+使用内置 image_gen 工具生成与编辑；未使用 CLI 或自定义绘图脚本。以下中英双语图用于中文 README；英文 README 使用独立的[纯英文版本](tapito-diagram-prompts-v4-en.md)。
 
 - [系统架构图](tapito-architecture-v4.png)
 - [任务执行流程图](tapito-execution-flow-v4.png)
