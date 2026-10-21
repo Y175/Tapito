@@ -102,6 +102,7 @@ private struct ProviderCreationView: View {
                     Button("OpenAI") { select(.openAI) }.accessibilityIdentifier("providerPresetOpenAI")
                     Button("OpenRouter") { select(.openRouter) }.accessibilityIdentifier("providerPresetOpenRouter")
                     Button("ChatGPT 订阅") { select(.chatGPTSubscription) }.accessibilityIdentifier("providerPresetChatGPTSubscription")
+                    Button("Jev 协同") { select(.jev) }.accessibilityIdentifier("providerPresetJev")
                     Button("自定义供应商") { select(nil) }.accessibilityIdentifier("providerPresetCustom")
                 }
                 .navigationTitle("添加供应商").navigationBarTitleDisplayMode(.inline)
@@ -116,6 +117,11 @@ private struct ProviderCreationView: View {
         profile.settings.baseURL = preset?.defaultBase ?? ""
         profile.settings.model = ""
         if preset == .chatGPTSubscription { profile.inferenceKind = .responses }
+        if preset == .jev {
+            profile.inferenceKind = .systemOne
+            profile.models = ["jev-1.14.0", "jev-1.13.0"]
+            profile.settings.model = "jev-1.14.0"
+        }
         draft = profile
     }
 }
@@ -192,11 +198,31 @@ private struct ProviderEditor: View {
                         .accessibilityLabel("API 密钥")
                         .accessibilityValue(key.isEmpty ? (hasSavedKey ? "已保存密钥" : "未设置密钥") : "已输入密钥")
                         .accessibilityIdentifier("providerKey")
+                    if profile.providerKind == .jev {
+                        LabeledContent("运行方式", value: "主 Agent 规划 · Jev 执行")
+                        Picker("主 Agent 供应商", selection: Binding<UUID?>(get: { profile.jevContextSelection?.providerID }, set: { id in
+                            profile.jevContextSelection = id.map { .init(providerID: $0, model: "") }
+                        })) {
+                            Text("请选择").tag(UUID?.none)
+                            ForEach(model.providers.profiles.filter { $0.providerKind != .jev && $0.providerKind.supportsInference }) { item in
+                                Text(item.name).tag(Optional(item.id))
+                            }
+                        }.accessibilityIdentifier("jevContextProvider")
+                        if let selection = profile.jevContextSelection {
+                            if let context = model.providers.profiles.first(where: { $0.id == selection.providerID }) {
+                                Picker("主 Agent 模型", selection: Binding(get: { profile.jevContextSelection?.model ?? "" }, set: { profile.jevContextSelection?.model = $0 })) {
+                                    Text("请选择").tag("")
+                                    ForEach(context.availableModels, id: \.self) { Text($0).tag($0) }
+                                }.accessibilityIdentifier("jevContextModel")
+                            } else { Text("绑定的供应商已移除，请重新选择。").foregroundStyle(.red) }
+                        }
+                        Text(profile.providerKind.inferenceNotice).font(.caption).foregroundStyle(.secondary)
+                    }
                     if profile.providerKind.supportsResponses {
                         Picker("API格式", selection: Binding(get: { profile.inferenceAPI }, set: { api in
                             profile.inferenceKind = api
                             if api == .chatCompletions { profile.contextKind = .stateless }
-                        })) { ForEach(InferenceAPI.allCases) { Text($0.title).tag($0) } }.accessibilityIdentifier("providerInferenceAPI")
+                        })) { ForEach(InferenceAPI.allCases.filter { $0 != .systemOne }) { Text($0.title).tag($0) } }.accessibilityIdentifier("providerInferenceAPI")
                         if profile.inferenceAPI == .responses {
                             if profile.providerKind.supportsResponseChain { Picker("上下文", selection: Binding(get: { profile.contextPolicy }, set: { profile.contextKind = $0 })) {
                                 ForEach(ProviderContextPolicy.allCases) { Text($0.title).tag($0) }
@@ -238,7 +264,7 @@ private struct ProviderEditor: View {
                         .padding(.trailing, -12)
                     }.buttonStyle(.borderless)
                 }
-                if !profile.settings.model.isEmpty {
+                if !profile.settings.model.isEmpty, profile.providerKind != .jev {
                     ModelReasoningSection(metadata: profile.metadata(for: profile.settings.model),
                         parameters: Binding(get: { profile.parameters(for: profile.settings.model) }, set: { value in
                             if profile.modelParameters == nil { profile.modelParameters = [:] }

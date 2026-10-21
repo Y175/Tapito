@@ -142,7 +142,6 @@ mod tests {
             c.consume_port(Purpose::NegotiatedTunnel { port: 4321 })
                 .is_err()
         );
-        assert!(c.consume_port(Purpose::LockdownSession).is_err());
         assert_eq!(c.consume_port(Purpose::PairVerify).unwrap(), 1234);
         assert!(c.consume_port(Purpose::PairVerify).is_err());
         assert!(
@@ -175,5 +174,19 @@ mod tests {
         let c = LocalVPNConnector::new(u32::MAX, 1234).unwrap();
         assert!(c.connect(Purpose::PairVerify).await.is_err());
         assert!(c.connect(Purpose::PairVerify).await.is_err());
+    }
+}
+
+/// Test-only direct peer: no hardware relay or device address is used.
+#[cfg(feature = "offline-fixtures")]
+pub(crate) struct LoopbackFixtureConnector(pub u16);
+#[cfg(feature = "offline-fixtures")]
+impl NcmConnector for LoopbackFixtureConnector {
+    fn connect(&self, purpose: Purpose) -> DialFuture<'_> {
+        Box::pin(async move {
+            if purpose != Purpose::PairVerify { return Err(io::ErrorKind::InvalidInput.into()); }
+            let stream = tokio::net::TcpStream::connect((Ipv4Addr::LOCALHOST, self.0)).await?;
+            Ok(Box::new(stream) as Stream)
+        })
     }
 }

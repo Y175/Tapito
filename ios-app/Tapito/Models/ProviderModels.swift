@@ -4,10 +4,10 @@ import ProviderCore
 // Service identity/discovery policy; wire format is selected separately by InferenceAPI.
 // Raw values remain compatible with the legacy protocolKind settings field.
 enum ProviderKind: String, Codable, CaseIterable, Identifiable, Sendable {
-    case openAI, anthropic, gemini, ollama, openRouter, chatGPTSubscription
+    case openAI, anthropic, gemini, ollama, openRouter, chatGPTSubscription, jev
     // Retain legacy raw values so existing archives remain readable; only these
     // services are offered when creating or editing a configuration.
-    static let selectableKinds: [ProviderKind] = [.openAI, .openRouter, .chatGPTSubscription]
+    static let selectableKinds: [ProviderKind] = [.openAI, .openRouter, .chatGPTSubscription, .jev]
     var isSelectable: Bool { Self.selectableKinds.contains(self) }
     var id: String { rawValue }
     var title: String {
@@ -18,6 +18,7 @@ enum ProviderKind: String, Codable, CaseIterable, Identifiable, Sendable {
         case .ollama: return "Ollama"
         case .openRouter: return "OpenRouter"
         case .chatGPTSubscription: return "ChatGPT 订阅"
+        case .jev: return "Jev 协同"
         }
     }
     var supportsResponses: Bool { self == .openAI || self == .openRouter || self == .chatGPTSubscription }
@@ -25,11 +26,13 @@ enum ProviderKind: String, Codable, CaseIterable, Identifiable, Sendable {
     var supportsInference: Bool { self != .anthropic && self != .gemini }
     var inferenceNotice: String {
         if self == .chatGPTSubscription { return ChatGPTSubscriptionPolicy.mobileLoginNotice }
+        if self == .jev { return "主 Agent 管理任务、技能、输入内容和最终答复；Jev 根据本机 OCR 执行当前阶段。Jev 只接收文字；必要时主 Agent 可请求截图，发送给绑定的模型。" }
         return supportsInference ? "推理接口需显式选择；模型仍须支持图片和工具，模型列表不证明 Responses 兼容性。" : "目前仅支持模型发现；尚未接入此协议的原生推理，不能开始任务。"
     }
     var defaultBase: String {
         switch self {
         case .openAI, .chatGPTSubscription: return "https://api.openai.com/v1"
+        case .jev: return "https://api.typesafe.ai/v1"
         case .anthropic: return "https://api.anthropic.com/v1"
         case .gemini: return "https://generativelanguage.googleapis.com/v1beta"
         case .ollama: return "https://ollama.example"
@@ -38,6 +41,7 @@ enum ProviderKind: String, Codable, CaseIterable, Identifiable, Sendable {
     }
     var baseHint: String {
         switch self {
+        case .jev: return "TypeSafe 基础地址：https://api.typesafe.ai/v1；使用原生 System One 接口。"
         case .chatGPTSubscription: return "仅使用官方授权与 Responses 端点；不接收 API Key 或自定义地址。"
         case .openAI: return "填写 API 基础地址，通常以 /v1 结尾；不要填 /chat/completions 或 /responses。支持 HTTPS，局域网 HTTP 须填写私有 IPv4 地址。"
         case .anthropic: return "填写 HTTPS 地址及代理前缀，可包含 /v1；模型接口追加 /models。"
@@ -55,7 +59,7 @@ enum ProviderKind: String, Codable, CaseIterable, Identifiable, Sendable {
         }
         while parts.path.hasSuffix("/") { parts.path.removeLast() }
         let lower = parts.path.lowercased()
-        guard !["/chat/completions", "/responses", "/messages", "/models", "/api/tags", "/api/show"].contains(where: lower.hasSuffix),
+        guard !["/chat/completions", "/responses", "/messages", "/models", "/api/tags", "/api/show", "/systemone"].contains(where: lower.hasSuffix),
               !lower.contains(":generatecontent"), !lower.contains(":streamgeneratecontent") else {
             throw AppError.invalid("此处需要基础地址，请移除具体接口路径（例如 /chat/completions 或 /models）")
         }
@@ -116,7 +120,7 @@ enum ModelParameter: String, CaseIterable, Identifiable, Sendable {
     var id: String { rawValue }
     var isInteger: Bool { self != .temperature && self != .topP }
     static func fields(for providerKind: ProviderKind) -> [ModelParameter] {
-        guard providerKind.supportsInference, providerKind != .chatGPTSubscription else { return [] }
+        guard providerKind.supportsInference, providerKind != .chatGPTSubscription, providerKind != .jev else { return [] }
         return providerKind == .openAI ? allCases : allCases.filter { $0 != .maxCompletionTokens }
     }
     func support(providerKind: ProviderKind, model: DiscoveredModel?) -> CapabilitySupport {
@@ -179,9 +183,15 @@ struct ModelParameters: Codable, Equatable, Sendable {
 
 /// Optional fields on ProviderProfile preserve existing settings as Chat Completions.
 enum InferenceAPI: String, Codable, CaseIterable, Identifiable, Sendable {
-    case chatCompletions, responses
+    case chatCompletions, responses, systemOne
     var id: String { rawValue }
-    var title: String { self == .responses ? "OpenAI Responses" : "OpenAI Chat Completions" }
+    var title: String {
+        switch self {
+        case .chatCompletions: return "OpenAI Chat Completions"
+        case .responses: return "OpenAI Responses"
+        case .systemOne: return "TypeSafe System One"
+        }
+    }
 }
 enum ProviderContextPolicy: String, Codable, CaseIterable, Identifiable, Sendable {
     case stateless, responseChain

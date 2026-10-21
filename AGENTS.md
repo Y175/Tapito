@@ -8,15 +8,15 @@
 
 # 阅读与验证入口
 
-当前 App 默认路线是 iOS 27 + VPN 回环开发者服务截图/触控（免 ESP32）；可在设置选择 ESP32 NCM 模式，复用系统配对身份与 CoreDevice 后端。ScreenCaptureKit + PA3 USB Device NCM/HID 和 TLS 实现保留，旧链路暂未提供切换开关。先读 `README.md` 和本次改动涉及的源码；项目待办重评/证据在 `docs/PROJECT-TODOS.md`。
+当前 App 仅保留 iOS 27 + 本机 VPN 回环开发者服务截图/触控。ESP32 NCM、PA3 USB HID、旧 TLS Host 桥接及固件构建已移除。配对身份、CoreDevice/Rust 后端、媒体释放和输入授权仍是本机 VPN 的公共依赖。先读 `README.md` 和本次改动涉及的源码。
 
-默认检索范围：`ios-app/Tapito`、`ios-app/TapitoTests`、`ios-app/TapitoUITests`、`firmware-device/main`、`tests/usb_device`。不要默认递归读取 `.build/`、`archives/`、`ios-app/Vendor/` 或旧 Host `firmware/`、`tests/usb_host_sim/`；当问题涉及相应实现、上游兼容或历史证据时再按需查看。许可证与来源清单保留。
+默认检索范围：`ios-app/Tapito`、`ios-app/TapitoTests`、`ios-app/TapitoUITests`、`ncm-dev/TapitoNCM`、`ncm-dev/rust/src`。不要默认递归读取 `.build/`、`archives/` 或 vendor；许可证与来源记录保留。
 
 默认验证：
 
-- PA3 协议/停止释放：`CC=clang bash tools/test_usb_device.sh`（仅回环网络）。
+- VPN/协议 Host 测试：`bash tools/test_ncm_rust.sh`、`bash tools/test_ncm_swift.sh`、`bash tools/test_ncm_chain.sh`（合成回环对端，无手机操作）。
 - App 改动：`bash ios-app/scripts/test_core.sh <隔离模拟器 UDID>`；加 `RUN_UI_TESTS=1` 跑现行 UI 用例。
 - 最终无签名 iPhoneOS build：参见 `ios-app/README.md`。
 - 核心协议、单次授权、会话隔离、未知结果、不重放、checkpoint 迁移和停止释放测试始终保留在默认 target。不能为缩短验证删除这些覆盖。
 
-归档入口见 `archives/README.md`。非核心 PiP 状态展示和 Siri UI 测试可通过 `INCLUDE_ARCHIVED_TESTS=1 python3 ios-app/scripts/generate_xcode_project.py` 临时加入；结束后不带该变量重新生成默认工程。旧控制调试 UI 用例是历史证据，不代表当前导航验收。固件 Host 测试的原目录和脚本继续保留，按涉及范围显式运行。
+归档入口见 `archives/README.md`。非核心 PiP 状态展示和 Siri UI 测试可通过 `INCLUDE_ARCHIVED_TESTS=1 python3 ios-app/scripts/generate_xcode_project.py` 临时加入；结束后不带该变量重新生成默认工程。旧控制调试 UI 用例是历史证据，不代表当前导航验收。ESP32 专用测试随已删除模块移除；VPN 授权、会话失效、停止释放与跨语言取消覆盖继续保留。

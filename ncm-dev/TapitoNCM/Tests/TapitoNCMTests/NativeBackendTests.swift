@@ -215,27 +215,11 @@ final class NativeBackendTests: XCTestCase {
         var malformed = bytes; malformed.removeLast()
         XCTAssertThrowsError(try NCMVideoSample(malformed))
     }
-    @MainActor func testLockdownGateIsIndependentOfRemotePairing() async {
-        let client = NativeLockdownSession()
-        do { try await client.connect(pairingRecord: Data("rp-record".utf8), expectedUDID: "PUBLIC-TEST", authorized: false); XCTFail("authorization gate") }
-        catch { XCTAssertEqual(error as? NativeBackendError, .authorizationRequired) }
-        do { try await client.stop(); XCTFail("idle session") }
-        catch { XCTAssertEqual(error as? NativeBackendError, .closed) }
-        var handle: UInt64 = 55
-        let invalid = Data("rp-record".utf8), udid = Data("PUBLIC-TEST".utf8)
-        invalid.withUnsafeBytes { record in udid.withUnsafeBytes { peer in
-            let r = ncm_bytes(data: record.bindMemory(to: UInt8.self).baseAddress, size: record.count)
-            let u = ncm_bytes(data: peer.bindMemory(to: UInt8.self).baseAddress, size: peer.count)
-            XCTAssertEqual(ncm_lockdown_start(1, 8, r, u, &handle), 1)
-            XCTAssertEqual(handle, 0)
-        }}
-        client.close(); client.close()
-    }
     @MainActor func testActualNativeABIAndMalformedIdentityBoundary() throws {
         XCTAssertEqual(NativeDeveloperServices.linkedABIVersion, 1)
         XCTAssertEqual(MemoryLayout<ncm_event>.size, 32)
         var handle: UInt64 = 44
-        XCTAssertEqual(ncm_backend_start(nil, nil, &handle), 1)
+        XCTAssertEqual(ncm_local_vpn_start(1, 54321, 8, nil, &handle), 1)
         XCTAssertThrowsError(try AuthorizedRemoteIdentity(signingSeed: Data(), controllerID: "test", peerID: "test", peerPublicKey: Data(), alternateIRK: Data(), peerUDID: "test", peerModel: "test"))
         XCTAssertEqual(ncm_backend_submit(0, 1, 2, 0, 0), 3)
     }
@@ -248,9 +232,8 @@ final class NativeBackendTests: XCTestCase {
     @MainActor func testVerifyConsentGateRunsBeforeAnyInterfaceOrSocket() async throws {
         // Synthetic bytes only; no pairing record is generated or persisted.
         let identity = try AuthorizedRemoteIdentity(signingSeed: Data(repeating: 0x42, count: 32), controllerID: "SYNTHETIC", peerID: "SYNTHETIC", peerPublicKey: Data(repeating: 0x44, count: 32), alternateIRK: Data(repeating: 0x33, count: 16), peerUDID: "SYNTHETIC", peerModel: "SYNTHETIC")
-        let discovery = try DiagnosticReply.decode(Data("{\"protocol\":\"ND1\",\"layer\":\"discovery\",\"result\":\"candidates\",\"authenticated\":false,\"generation\":7,\"endpoints\":[{\"index\":0,\"service\":\"remotepairing\",\"family\":4,\"port\":54321}]}\n".utf8))
         let client = NativeDeveloperServices()
-        do { try await client.connect(identity: identity, authorization: .init(verifyExistingIdentity: false), discovery: discovery, endpoint: discovery.endpoints![0]); XCTFail("consent gate") }
+        do { try await client.connectLocalVPN(identity: identity, authorization: .init(verifyExistingIdentity: false), pairingPort: 54321); XCTFail("consent gate") }
         catch { XCTAssertEqual(error as? NativeBackendError, .authorizationRequired) }
     }
     #if NCM_OFFLINE_FIXTURES
@@ -372,7 +355,7 @@ final class NativeBackendTests: XCTestCase {
         let output = Pipe()
         let port: UInt16
         init(hold: Bool) throws {
-            guard let path = ProcessInfo.processInfo.environment["NCM_RELAY_FIXTURE"] else { throw XCTSkip("fixture executable absent") }
+            guard let path = ProcessInfo.processInfo.environment["NCM_PAIRING_FIXTURE"] else { throw XCTSkip("fixture executable absent") }
             process.executableURL = URL(fileURLWithPath: path)
             process.arguments = hold ? ["hold"] : []
             process.standardOutput = output
@@ -388,16 +371,17 @@ final class NativeBackendTests: XCTestCase {
         }
         deinit { if process.isRunning { process.terminate() } }
     }
-    @MainActor func testSwiftRustRealCRelayPropagatesPairVerifyFailure() async throws {
+    @MainActor func testSwiftRustDirectPeerPropagatesPairVerifyFailure() async throws {
         let fixture = try Fixture(hold: false), client = NativeDeveloperServices()
         do { try await client.connectLoopbackFixture(port: fixture.port); XCTFail("synthetic peer never authenticates") }
-        catch { XCTAssertEqual(error as? NativeBackendError, .protocolFailure(stage: 3, cause: 1)) }
+        // The synthetic peer closes after M1: preserve EOF as connectionClosed, not an identity rejection.
+        catch { XCTAssertEqual(error as? NativeBackendError, .protocolFailure(stage: 3, cause: 15)) }
         let evidence = fixture.finish()
         XCTAssertEqual(fixture.process.terminationStatus, 0)
         XCTAssertTrue(evidence.contains("GREETING")); XCTAssertTrue(evidence.contains("VERIFY_M1")); XCTAssertTrue(evidence.contains("CLOSED"))
         do { _ = try await client.listServices(); XCTFail("failed generation reused") } catch { XCTAssertEqual(error as? NativeBackendError, .closed) }
     }
-    @MainActor func testSwiftCancellationClosesNativeWorkerAndCRelay() async throws {
+    @MainActor func testSwiftCancellationClosesNativeWorkerAndPeer() async throws {
         let fixture = try Fixture(hold: true), client = NativeDeveloperServices()
         let task = Task { @MainActor in try await client.connectLoopbackFixture(port: fixture.port) }
         // Await actual synthetic wire evidence; detached reader leaves MainActor

@@ -511,6 +511,8 @@ import ActivityKit
         for privateValue in ["Secret goal", request.detail, request.imageID, request.parametersDigest, request.callID!] { XCTAssertFalse(encoded.contains(privateValue)) }
         var phases: [AgentActivityAttributes.Phase] = []
         let subscription = model.$activitySnapshot.compactMap { $0?.state.phase }.sink { phases.append($0) }
+        var stages: [AgentActivityAttributes.Step] = []
+        let stageSubscription = model.$activitySnapshot.compactMap { $0?.state.step }.sink { stages.append($0) }
         model.approve(true)
         XCTAssertEqual(model.activitySnapshot?.state.phase, .approved)
         XCTAssertNil(model.activitySnapshot?.state.approvalID)
@@ -520,8 +522,12 @@ import ActivityKit
         XCTAssertNil(model.activitySnapshot?.state.operation)
         XCTAssertEqual(model.activitySnapshot?.state.completedTools, 4)
         XCTAssertTrue(phases.contains(.executing))
+        XCTAssertTrue(stages.contains(.acting))
+        XCTAssertTrue(stages.contains(.observing))
+        XCTAssertNil(model.activitySnapshot?.state.step, "A completed run must not advertise an active step")
         XCTAssertLessThan(try XCTUnwrap(phases.firstIndex(of: .approved)), try XCTUnwrap(phases.firstIndex(of: .executing)))
         subscription.cancel()
+        stageSubscription.cancel()
     }
     func testDeepLinkOnlyNavigatesAndCannotCrossNewRunOrSession() async throws {
         let model = try await pendingDemo(); defer { model.stop() }

@@ -1,7 +1,7 @@
 import Foundation
 
 /// A delivered execution capability, never a successful scheduler submission.
-/// Sources include SCK/USB health, a delivered system task, and active AVKit PiP.
+/// Sources include task-scoped location, a delivered system task, and active AVKit PiP.
 @MainActor protocol RunBackgroundLease: AnyObject {
     var expirationHandler: (() -> Void)? { get set }
     var backgroundReady: Bool { get }

@@ -141,7 +141,7 @@ extension AgentSessionController: SessionCommandRunning {
     var commandStartError: String? {
         selectedConversationID.flatMap { existingExecutionModel(for: $0)?.errorMessage }
     }
-    var commandBusy: Bool { hasBusySessions || isListening }
+    var commandBusy: Bool { hasBusySessions }
     var commandStatus: SessionPublicStatus {
         if let run = currentRun, let worker = existingExecutionModel(for: run.conversationID) {
             if worker.stopping { return .stopping }

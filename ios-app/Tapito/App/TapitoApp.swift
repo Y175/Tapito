@@ -8,11 +8,6 @@ import Darwin
     @Environment(\.scenePhase) private var scenePhase
     init() {
         TapitoShortcuts.updateAppShortcutParameters()
-        #if DEBUG
-        if ProcessInfo.processInfo.arguments.contains("--local-vpn-probe") {
-            _ = PairingFlow.shared.selectRoute(.vpnLoopback)
-        }
-        #endif
         PairingFlow.shared.registerBackgroundTask()
     }
     var body: some Scene {
@@ -29,7 +24,7 @@ import Darwin
                 }
                 .onAppIntentExecution(PrepareAgentTaskIntent.self) { _ in
                     // SwiftUI receives the scene handoff; perform() alone owns task submission.
-                    model.usbDiagnostics.record("siri.sceneHandoff received=true")
+                    model.controlDiagnostics.record("siri.sceneHandoff received=true")
                 }
                 .preferredColorScheme(testColorScheme)
                 // A covered backing layer supplies AVKit without occupying the UI.
@@ -124,7 +119,7 @@ private struct LocalVPNProbeView: View {
                     .frame(width: 270, height: 160)
             }.buttonStyle(.borderedProminent)
                 .onGeometryChange(for: CGRect.self) { $0.frame(in: .global) } action: { target = $0 }
-            VStack { Text("免 ESP32 真机验证").font(.title2); Spacer(); Text(status).font(.footnote).multilineTextAlignment(.center) }.padding()
+            VStack { Text("VPN 回环真机验证").font(.title2); Spacer(); Text(status).font(.footnote).multilineTextAlignment(.center) }.padding()
         }.frame(maxWidth: .infinity, maxHeight: .infinity)
         .task { await run() }
     }
@@ -138,7 +133,7 @@ private struct LocalVPNProbeView: View {
             try? records.joined(separator: "\n").write(to: url, atomically: true, encoding: .utf8)
             status = line
         }
-        record("start route=\(flow.route.rawValue) paired=\(flow.hasRecord)")
+        record("start transport=vpnLoopback paired=\(flow.hasRecord)")
         let deadline = ContinuousClock.now.advanced(by: .seconds(90))
         if !flow.ready && !flow.running { flow.verify() }
         while flow.running && !flow.ready && ContinuousClock.now < deadline {
@@ -247,7 +242,7 @@ private struct NCMToolsProbeView: View {
     @State private var status = "验证准备中"
     var body: some View {
         VStack(spacing: 24) {
-            Text("ESP32 工具验证").font(.title)
+            Text("手机控制工具验证").font(.title)
             Text(status)
         }.padding().frame(maxWidth: .infinity, maxHeight: .infinity).background(Color(uiColor: .systemBackground))
         .task { await run() }
@@ -319,7 +314,7 @@ private struct NCMToolsProbeView: View {
                         guard let x = command["x"] as? Int, let y = command["y"] as? Int else { throw AppError.invalid("测试坐标缺失") }
                         try await bridge.tap(x: x, y: y, imageID: frame.id)
                     } else if action == "type_text" {
-                        try await bridge.systemAction(name: action, text: "ESP32 direct input", arguments: [], imageID: frame.id)
+                        try await bridge.systemAction(name: action, text: "Tapito direct input", arguments: [], imageID: frame.id)
                     } else { throw AppError.invalid("不支持的测试操作") }
                     try await Task.sleep(for: .seconds(1))
                 }

@@ -5,7 +5,6 @@ struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
     @StateObject private var location = BackgroundLocationAccess.shared
     @Environment(\.scenePhase) private var scenePhase
-    @State private var control = PairingFlow.shared
     @State private var clear = false
     @State private var clearAssets = false
     @State private var assetStatus = ""
@@ -18,14 +17,9 @@ struct SettingsView: View {
                     }.accessibilityIdentifier("openProviders")
                 }
                 Section("手机操控") {
-                    Picker("连接模式", selection: Binding(get: { control.route }, set: { _ = control.selectRoute($0) })) {
-                        Text(DeviceControlRoute.vpnLoopback.title).tag(DeviceControlRoute.vpnLoopback)
-                        Text(DeviceControlRoute.ncmDeveloper.title).tag(DeviceControlRoute.ncmDeveloper)
-                    }.disabled(model.hasBusySessions || !control.canChangeRoute)
-                        .accessibilityIdentifier("deviceControlMode")
-                    NavigationLink { ESP32ControlSettingsView() } label: {
+                    NavigationLink { DeviceConnectionSettingsView() } label: {
                         Text("连接与验证")
-                    }.accessibilityIdentifier("esp32ControlSettings")
+                    }.accessibilityIdentifier("deviceConnectionSettings")
                 }
                 Section {
                     LabeledContent("执行方式", value: "任务期间后台定位")

@@ -1,59 +1,51 @@
 # Tapito 程序工作流：实现与验收
 
-日期：2026-10-16。本文描述已接入正式 live 入口的代码。早期设计稿中的示例 JSON 不等于当前调用接口。原始架构目标见 [总体设计](Tapito-WORKFLOW-EXECUTION-DESIGN.md)。
+日期：2026-10-19。本文描述已接入正式 live 入口的代码。早期设计稿中的示例 JSON 不等于当前调用接口。原始架构目标见 [总体设计](Tapito-WORKFLOW-EXECUTION-DESIGN.md)。
 
 ## 实际运行路径
 
+正式入口为 `HarnessAgentEngine`，使用同一个 ReAct 工具循环，不再使用 M1–M5 固定分支或 `route_task`。
+
 ```mermaid
 flowchart TD
-    A[文字 / 语音转写 / 操作按钮] --> B[宿主准备运行身份与授权、记忆及能力快照]
-    B --> C[M1：结构化任务路由]
-    C --> Q{程序检查}
-    Q -->|缺参数| CL[返回澄清问题]
-    Q -->|普通问答| M5[M5：回答]
-    Q -->|设备任务| P[程序解析已安装 App、装配技能；当前屏幕任务不启动 App]
-    P --> K{已审核能力匹配任务?}
-    K -->|是| R[冻结能力版本；按序本机核对页面与控件并执行]
-    R -->|导航完成| DONE[程序回复]
-    R -->|需要本次内容| O[读取本次 OCR 后整理结果]
-    R -->|页面偏离| M4[M4：只修正剩余部分]
-    K -->|否| OCR[程序取得本机 OCR]
-    OCR --> M2[M2 / M3：工具批次或结果]
-    M4 --> T
-    M2 --> T[Tool Call：完整批次校验、逐项授权、串行执行与回执]
-    T -->|有输入| V[程序重新观察；提供真实结果]
-    V --> M2
-    T -->|只读结果| M2
-    T -->|协议错误 / 结果未知| STOP[停止，保留诊断，不重发]
-    M2 -->|证据已足够| DONE
-    O --> DONE
-    M5 --> DONE
-    DONE --> J[落盘学习任务；不等待分析完成]
-    J -.可用执行时间内.-> M6[M6：有用户原话的长期记忆]
-    J -.可用执行时间内.-> M7[M7：UI 骨架与操作能力候选]
-    M7 --> REVIEW[核对证据、去重，用户审核后启用]
+ A[用户任务与有效上下文] --> B[核心提示词 + Skill 名称和描述 + 可用工具]
+ B --> M[模型选择 Skill / Tool 或直接答复]
+ M --> L[load_skill 按名称读取文件]
+ L --> M
+ M --> T[完整批次校验 / 串行 Tool Call / 对应回执]
+ T --> O[页面变化后本机 OCR / 已学习操作本机核对]
+ O --> M
+ T --> C[明确未发送的参数或页面错误：纠正剩余步骤]
+ C --> M
+ T --> E[协议失败或结果未知：停止，不重放]
+ M --> D[任务答复]
+ D -.持久异步队列.-> K[M6 个人记忆 / M7 页面操作学习]
+ K --> R[审核后归入对应 App Skill 引用]
 ```
 
-自然语言入口固定先做一次 M1；当前未新增可以跳过 M1 的结构化快捷指令接口。M1、M2/M3、M4、M5 使用本轮已选供应商；M6/M7 使用独立客户端和上下文，但仍固定原供应商/模型，绝不静默切换。
+App 任务由模型实际调用 `list_apps`，随后用返回的 Bundle ID 调用 `launch_app`。中文微信与系统英文 WeChat 不做字符串相等判断。普通聊天可直接回答；当前屏幕任务不要求查询或启动 App。
 
-普通探索中的 M3 可以根据已观察结果直接回复，不再额外调用一轮 M5。没有单独的“问模型要不要 OCR”步骤。程序在探索开始、改变页面的工具批次结束后观察；纯图标、歧义及复杂内容仍允许模型明确请求同帧截图。
+App 专属知识按 App 独立成 Skill，通用 `ios-operation` 适用于有或没有专属技能的 App。`available_skills` 是操作知识目录，不是 App 白名单；没有匹配项时只加载通用技能，查询真实安装目录、启动应用、根据当前 OCR／必要时截图调用工具，不要求先学习或创建专属 Skill。起始只提供名称、描述和 `load_skill` / `list_apps`；加载基础操作技能后，下一次模型决策使用已启用的设备工具定义。模型不填写技能 UUID/修订，宿主按名称绑定本轮不可变快照。
+
+已审核页面及流程在运行时生成对应 App Skill 的 `references/learned-operations.md`：页面功能、固定控件位置、版本、前后页面元素、预期结果，以及 `run_page` / `run_workflow` 所需引用。未审核候选不进入可执行目录。结构化存档是唯一执行来源，Markdown 是按需读取的模型视图；不是两份独立维护的数据。
 
 ## 模型与工具契约
 
-实际提示词唯一来源是 [WorkflowPrompts.swift](../ios-app/TapitoAgentKit/Sources/TapitoAgentSwiftAgentKit/WorkflowPrompts.swift)，修订 `workflow-2026-10-16.1`。程序接口在 [WorkflowAgentEngine.swift](../ios-app/TapitoAgentKit/Sources/TapitoAgentSwiftAgentKit/WorkflowAgentEngine.swift)。
+实际提示词见 [WorkflowPrompts.swift](../ios-app/TapitoAgentKit/Sources/TapitoAgentSwiftAgentKit/WorkflowPrompts.swift)，修订 `harness-2026-10-19.1`。引擎见 [HarnessAgentEngine.swift](../ios-app/TapitoAgentKit/Sources/TapitoAgentSwiftAgentKit/HarnessAgentEngine.swift)。
 
-| 节点 | 实际输出 / 程序约束 |
-| --- | --- |
-| M1 | 一个 `route_task` 调用：`kind`、`target_mode`、`app_bundle_id`、`app_name`、`skill_ids`、`flow_id/revision`、`texts`、`page_calls`、`requires_summary`、`completion_kind`、`question`。类型、能力 ID、版本、参数由程序校验 |
-| M2/M3 | 只调用已注册执行工具；完整批次预检后串行执行。工具回执与调用 ID 一一对应 |
-| M4 | 仅页面偏离或明确“输入未发送、需要观察”的错误可进入；携带已完成能力列表和当前段送达状态；禁止重放已执行部分 |
-| M5 | 回答或整理本轮真实结果；导航匹配、命令送达与业务成功明确区分 |
-| M6 | `store_memory_proposals`；来源须匹配用户原话，更新须带原修订，清理/关闭自动记忆使旧输出失效 |
-| M7 | `store_page_candidates`；只能标注真实 evidenceID 的页面名、功能和观察结果，不能自行生成坐标；看不到 M6 私人输入或页面图像样本 |
+- 每轮声明当前可用工具，完整模型终态后才允许执行；截断、重复调用 ID、损坏协议明确失败。
+- 整批参数预检通过后串行执行，调用 ID 与回执一一对应。预检失败时本批均未执行，模型最多连续纠正两次。
+- 已明确未发送的操作或页面偏离可观察后纠正；已执行部分不重放，未知结果直接停止。
+- 输入后的观察由程序负责，无需模型另问“是否 OCR”。已有 OCR 充分时直接决策；需要图标或视觉状态才请求同帧截图。
+- 已审核 `run_page` / `run_workflow` 仍由独立本机执行器核对当前画面与版本；不能用历史位置证明动态收件人或业务成功。
+- 主链最多 32 次模型请求、每批 16 个工具。M6/M7 继续独立异步运行，不操作设备、不阻塞本轮答复，不静默更换供应商。
 
-主链总预算 32 次模型请求；每批最多 16 个工具、每个页面能力序列最多 16 段；最多 2 次观察纠错。模型流必须完整结束，截断或协议失败不执行部分调用。普通会话不调用设备工具；App 切换仅使用本轮查询得到的标识。
+## OCR 与应用选择的本次调整
 
-程序准备阶段不让模型分别调用 load_skill / search_memory / list_apps / list_workflows。基础技能及备忘录、时钟、微信、微博、QQ 的匹配技能由宿主装配；模型仍可选择其他已启用的相关技能。跨 App 任务可以在探索分支切换已验证 App；一段已发布能力序列只针对一个 App。
+- App 身份只校验模型选择的 Bundle ID 是否属于本轮真实目录，不比较用户中文名与系统英文显示名。目录缺损/连接失败明确报错；只在确实未安装或真实歧义时澄清。任务记录持久化目录条数和选中标识，不保存模型原始响应或联系人内容。
+- OCR 候选增加 `positions`，表示该文字相对所有同名候选的位置（包含分页外候选）。上下文明确时可用 `tap_text(position: topmost/bottommost/leftmost/rightmost)`，不额外上传图片。
+- 相对位置必须与候选的非重叠边界一致；同坐标、重叠或错误方向不能通过。低置信度、过期帧、未知候选及实际未消除的歧义仍需纠正。控件位置不能用来推断同名联系人身份。
+- 保留图标、图片及视觉状态所需的同帧截图。已取得有效 OCR 时直接决策下一步，不重复 OCR 或单独询问是否截图。
 
 ## 页面知识保存什么
 
@@ -81,20 +73,24 @@ flowchart TD
 
 ## 解耦边界
 
+Jev 协同也使用下述 Harness。主 Agent 通过 `delegate_screen` 委派当前阶段；Jev 根据 OCR 选择局部操作，返回页面和回执，由主 Agent 继续决策及最终回答。配置、提示词与最新验证见 [Jev 协同执行](Tapito-JEV-OCR.md)。
+
 | 位置 | 责任 |
 | --- | --- |
 | `TapitoAgentCore` | 中立事件、会话状态、页面知识、执行器、记忆与持久学习队列；不引用 SwiftUI、UIKit、语音、VPN |
-| `TapitoAgentSwiftAgentKit` | M1–M7 提示词、结构校验、模型流、程序分支、工具调度；复用 ProviderKit |
+| `TapitoAgentSwiftAgentKit` | Harness 与 M6/M7 提示词、参数校验、模型流、工具调度；复用 ProviderKit |
 | iOS `ActionCoordinator` | 现有权限、连接、截图、Vision OCR、像素采样、触控和整段输入；所有动作仍有回执和停止栅栏 |
-| `AgentSessionController` | 组合依赖，桥接宿主生命周期、存储和事件；正式 live 入口选择新程序运行时 |
+| `AgentSessionController` | 组合依赖，桥接宿主生命周期、存储和事件；正式 live 入口选择 Harness 运行时 |
 | UI / 语音 / 灵动岛 | 订阅中立事件和调用现有入口；后续 UI 重构无需修改流程引擎或页面库 |
 
 离线演示与已有 SDK/展示测试显式使用 `reactFixture`；它不是正式执行失败后的兼容降级。新增程序运行时测试独立覆盖新入口。
 
 ## 本轮验证
 
-- macOS Swift Package 核心测试：54 项、10 个测试套件全部通过，见 `.build/agent-workflow-v3-tests.log`；包括程序路由、实际 Tool Call、整批预检、无逐步模型调用、消息关联、未知结果停止、取消、旧帧拒绝、清理隔离、队列恢复、来源校验、M6/M7 上下文隔离。
-- iPhoneOS `build-for-testing` 无签名构建通过：见 `.build/agent-workflow-v3-build.log`。App、扩展和 XCTest 目标完成编译；未运行模拟器或真机 XCTest。
-- iOS 适配测试覆盖局部图像采样、无 OCR 回放仍经过授权/回执，以及正式程序运行时的会话入口；本轮仅编译，未执行。
-- 本轮没有安装、真实模型调用、手机点击、业务发送或耗时基准。未宣称真机 P50/P95 提速，也不宣称五个 App 的全部页面流程已经沉淀。
-- 辅助 `check_source.py` 因本机缺少 `tree_sitter` 未运行；Swift/Xcode 编译结果独立记录，不把源文本断言当成运行验证。
+- 59 项 Agent 主机测试、10 个套件通过：`.build/harness-agent-tests.log`。覆盖中文 App 选择、名称加载技能、普通聊天、当前屏幕、整批参数预检、参数纠正、已执行部分不重放、重复 ID、截断模型、未知结果停止、取消、已学习页面调用及生成 Skill 引用。
+- iPhoneOS 签名构建通过：`.build/harness-signed-build.log`。无签名首次构建遇到 Xcode 本地包源文件图未刷新；更新包清单并重新解析后签名构建通过。
+- 独立运行诊断位于 Application Support/Tapito/AgentDiagnostics/<runID>.log，保留最近 30 轮；记录模型阶段、工具名称、参数错误字段和执行状态，不保存输入正文。
+- 未启动模拟器、未自动执行真实 App 任务或播报语音。主机测试不代替真机端到端业务验证。
+
+- 补充验证：`check_source.py` 通过（106 个 Swift 文件）；iPhoneOS `build-for-testing` 成功，仅编译未运行测试。
+- 已安装至 175phone（com.y175.tapito），安装回执 `.build/harness-install.json` outcome=success，随后设备应用列表确认存在。安装未启动语音或真实任务。

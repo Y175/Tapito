@@ -43,6 +43,12 @@ struct ToolPresentation {
     var running: Bool { activeRun != nil && model.running }
     var stopping: Bool { model.stopping }
     var status: String { running ? model.status : session?.phase.label ?? "" }
+    /// Only the selected conversation's live run can drive the execution card.
+    var activityState: AgentActivityAttributes.ContentState? {
+        guard let snapshot = model.activitySnapshot, snapshot.attributes.sessionID == sessionID,
+              activeRun?.runID == snapshot.attributes.runID else { return nil }
+        return snapshot.state
+    }
     var warning: String? { model.errorMessage ?? model.sessions.warning }
     var providers: [ProviderProfile] { model.providers.profiles }
     var providerID: UUID? { model.selectedProvider(in: sessionID)?.id }
@@ -118,16 +124,19 @@ struct ToolPresentation {
     static func record(_ event: AssistantEvent, run: RunIdentity, frame: PresentedFrame?, in store: ConversationStore, skillNames: [String: String] = [:]) {
         guard store.accepts(run) else { return }
         func skillName(_ call: AssistantToolCall) -> String? {
-            guard call.name == "load_skill", let id = call.parameters["id"]?.value as? String else { return nil }
+            guard call.name == "load_skill" else { return nil }
+            if let name = call.parameters["name"]?.value as? String { return name }
+            guard let id = call.parameters["id"]?.value as? String else { return nil }
             return skillNames[id.uppercased()]
         }
         switch event {
         case .programAnswer(let text):
             store.beginAssistantTurn(run); store.completeAssistantTurn(text, reasoning: nil, identity: run)
-        case .llmCallStarted: store.beginAssistantTurn(run)
+        case .llmCallStarted(let turn): store.beginAssistantTurn(run, modelTurn: turn)
         case .streamChunk(let text): store.appendText(text, identity: run)
         case .reasoningChunk(let text): store.appendReasoning(text, identity: run)
-        case .llmCallCompleted(_, let response): store.completeAssistantTurn(response.text, reasoning: response.reasoning, identity: run)
+        case .llmCallCompleted(_, let response): store.completeAssistantTurn(response.text, reasoning: response.reasoning, durationSeconds: response.durationSeconds, identity: run)
+        case .llmCallFailed(_, let duration): store.failAssistantTurn(durationSeconds: duration, identity: run)
         case .toolCallsReceived(let calls):
             for call in calls {
                 store.updateTool(callID: call.id, name: call.name, state: .requested, arguments: arguments(for: call), skillName: skillName(call), identity: run)
@@ -136,7 +145,7 @@ struct ToolPresentation {
             store.updateTool(callID: call.id, name: call.name, state: .running, arguments: arguments(for: call), skillName: skillName(call), identity: run)
         case .toolExecutionFinished(let call, let result):
             store.updateTool(callID: call.id, name: call.name, state: result.isError ? .failed : .succeeded,
-                result: result.result, arguments: arguments(for: call), skillName: skillName(call), identity: run)
+                result: result.result, arguments: arguments(for: call), skillName: skillName(call), durationSeconds: result.durationSeconds, identity: run)
         default: break // Unrelated framework events stay out of UI/history.
         }
     }
@@ -155,7 +164,10 @@ struct ToolPresentation {
         case "search_memory": allowed = ["query"]
         case "remember_memory": allowed = ["key", "scope"]
         case "propose_skill_update": allowed = ["skill_id", "revision", "app_bundle_id", "frame_id"]
-        case "load_skill": allowed = ["id", "revision", "resource", "offset"]
+        case "load_skill": allowed = ["name", "id", "revision", "resource", "offset"]
+        case "run_page", "run_workflow": allowed = ["id", "revision"]
+        case "delegate_screen": allowed = ["goal", "completion", "input_purpose"]
+        case "launch_app": allowed = ["bundle_id", "purpose"]
         default: return "未注册工具；不展示原始参数"
         }
         var values: [String: Any] = [:]

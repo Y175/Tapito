@@ -47,7 +47,7 @@ public enum NativeBackendError: Error, Equatable {
 }
 public enum InputDelivery: Sendable { case reportsWrittenVisualEffectUnverified }
 
-/// Owns one native worker, its two relay streams and media. The caller closes
+/// Owns one native worker, its VPN streams and media. The caller closes
 /// on explicit stop, execution expiry or disconnect, rather than app visibility.
 /// Initializer is idle and never imports credentials.
 @MainActor public final class NativeDeveloperServices: DeveloperServices {
@@ -70,29 +70,6 @@ public enum InputDelivery: Sendable { case reportsWrittenVisualEffectUnverified 
         videoDecoder = nil; videoDecodeFailure = nil
         let old = handle; handle = 0; ready = false; services = []
         if old != 0 { ncm_backend_close(old) }
-    }
-    /// Caller must refresh discovery just before this call (candidate TTL).
-    /// Bind to the actual .2/24 Ethernet interface, never default routing.
-    public func connect(identity: AuthorizedRemoteIdentity, authorization: ExistingSessionAuthorization,
-                        discovery: DiagnosticReply, endpoint: DiagnosticReply.Endpoint) async throws {
-        try Task.checkCancellation()
-        guard authorization.verifyExistingIdentity else { throw NativeBackendError.authorizationRequired }
-        guard !busy, handle == 0 else { throw NativeBackendError.busy }
-        guard Self.linkedABIVersion == NCM_BACKEND_ABI else { throw NativeBackendError.unsupportedABI }
-        guard let generation = discovery.generation, generation > 0, endpoint.service == "remotepairing",
-              discovery.endpoints?.contains(where: { $0.index == endpoint.index && $0.family == endpoint.family && $0.port == endpoint.port && $0.service == endpoint.service }) == true else { throw NativeBackendError.invalidCandidate }
-        let row = try NCMInterfaceBinding.resolve(NCMInterfaceBinding.inventory()).row
-        var config = ncm_config(abi: 1, interface_index: row.index, generation: generation, endpoint_index: UInt32(endpoint.index), permissions: authorization.mask)
-        let values = [identity.signingSeed, Data(identity.controllerID.utf8), Data(identity.peerID.utf8), identity.peerPublicKey,
-                      identity.alternateIRK, Data(identity.peerUDID.utf8), Data(identity.peerModel.utf8)]
-        var started: UInt64 = 0
-        let code = withSlices(values) { b in
-            var raw = ncm_identity(seed: b[0], controller_id: b[1], peer_id: b[2], peer_public_key: b[3], alt_irk: b[4], peer_udid: b[5], peer_model: b[6])
-            return ncm_backend_start(&config, &raw, &started)
-        }
-        guard code == 0, started != 0 else { throw NativeBackendError.transport(code: code) }
-        handle = started
-        try await finishConnect(started)
     }
     /// Reuses the exact authenticated CoreDevice session over a bound local VPN socket.
     public func connectLocalVPN(identity: AuthorizedRemoteIdentity, authorization: ExistingSessionAuthorization,
@@ -354,64 +331,6 @@ private func withSlices<T>(_ data: [Data], _ index: Int = 0, _ slices: [ncm_byte
     if index == data.count { return body(slices) }
     return data[index].withUnsafeBytes { bytes in
         withSlices(data, index + 1, slices + [ncm_bytes(data: bytes.bindMemory(to: UInt8.self).baseAddress, size: bytes.count)], body)
-    }
-}
-
-/// Ordinary Lockdown only. Caller explicitly supplies the existing pairing plist.
-/// Kept separate from the RP identity, discovery and screenshot/media API.
-@MainActor public final class NativeLockdownSession {
-    private var handle: UInt64 = 0
-    private var ready = false
-    private var busy = false
-    public init() {}
-    deinit { if handle != 0 { ncm_backend_close(handle) } }
-    public func close() {
-        let old = handle; handle = 0; ready = false
-        if old != 0 { ncm_backend_close(old) }
-    }
-    public func connect(pairingRecord: Data, expectedUDID: String, authorized: Bool) async throws {
-        try Task.checkCancellation()
-        guard authorized else { throw NativeBackendError.authorizationRequired }
-        guard !busy, handle == 0 else { throw NativeBackendError.busy }
-        guard !pairingRecord.isEmpty, pairingRecord.count <= 1024 * 1024,
-              !expectedUDID.isEmpty, expectedUDID.utf8.count <= 256 else { throw NativeBackendError.invalidIdentity }
-        guard NativeDeveloperServices.linkedABIVersion == NCM_BACKEND_ABI else { throw NativeBackendError.unsupportedABI }
-        let row = try NCMInterfaceBinding.resolve(NCMInterfaceBinding.inventory()).row
-        var started: UInt64 = 0
-        let code = withSlices([pairingRecord, Data(expectedUDID.utf8)]) { slices in
-            ncm_lockdown_start(row.index, UInt32(NCM_ALLOW_EXISTING_VERIFY), slices[0], slices[1], &started)
-        }
-        guard code == 0, started != 0 else { throw NativeBackendError.transport(code: code) }
-        handle = started; busy = true; defer { busy = false }
-        do { try await receive(started, requestID: 0); ready = true }
-        catch { close(); throw error }
-    }
-    /// Normal cleanup sends StopSession on the same TLS channel. Cancellation or
-    /// background close instead revokes transport; it cannot confirm remote stop.
-    public func stop() async throws {
-        guard !busy else { throw NativeBackendError.busy }
-        guard ready, handle != 0 else { throw NativeBackendError.closed }
-        busy = true; defer { busy = false; close() }
-        let token = handle
-        let code = ncm_backend_submit(token, 1, 5, 0, 0)
-        guard code == 0 else { throw NativeBackendError.transport(code: code) }
-        try await receive(token, requestID: 1)
-    }
-    private func receive(_ token: UInt64, requestID: UInt64) async throws {
-        let deadline = ContinuousClock.now.advanced(by: .seconds(40))
-        while ContinuousClock.now < deadline {
-            try Task.checkCancellation()
-            guard handle == token else { throw NativeBackendError.closed }
-            var event = ncm_event()
-            let status = ncm_backend_poll(token, &event, nil, 0)
-            if status == 4 { try await Task.sleep(for: .milliseconds(10)); continue }
-            guard status == 0 else { throw NativeBackendError.transport(code: status) }
-            guard event.request_id == requestID, event.size == 0, event.reserved == 0 else { throw NativeBackendError.malformedEvent }
-            if event.kind == 3 { throw NativeBackendError.protocolFailure(stage: event.stage, cause: event.cause) }
-            guard event.kind == 2 else { throw NativeBackendError.malformedEvent }
-            return
-        }
-        throw NCMError.timeout
     }
 }
 

@@ -22,7 +22,7 @@ struct PrepareAgentTaskIntent: LiveActivityIntent, TargetContentProvidingIntent 
         let runtime = TapitoRuntime.shared
         runtime.model.setProtectedDataAvailable(UIApplication.shared.isProtectedDataAvailable)
         let needsForeground = runtime.model.commandNeedsForeground || (continuousConversation && !runtime.voice.session.state.phase.isActive)
-        runtime.model.usbDiagnostics.record("siri.execute handoffRequired=\(needsForeground) mediaActive=\(PiPExecutionActivity.shared.active)")
+        runtime.model.controlDiagnostics.record("siri.execute handoffRequired=\(needsForeground) mediaActive=\(PiPExecutionActivity.shared.active)")
         if needsForeground {
             try await continueInForeground(alwaysConfirm: false)
             try Task.checkCancellation()
@@ -33,14 +33,14 @@ struct PrepareAgentTaskIntent: LiveActivityIntent, TargetContentProvidingIntent 
             return .result()
         }
         let service = runtime.commands
-        TapitoRuntime.shared.model.usbDiagnostics.record("siri.execute received=true ready=\(TapitoRuntime.shared.model.commandCanStart)")
+        TapitoRuntime.shared.model.controlDiagnostics.record("siri.execute received=true ready=\(TapitoRuntime.shared.model.commandCanStart)")
         let command = SessionCommand(.execute(task))
         do {
             try await submit(command, using: service, activities: runtime.model.liveActivities)
         } catch {
             let model = TapitoRuntime.shared.model
             model.errorMessage = error.localizedDescription
-            model.usbDiagnostics.record("siri.execute failed=\(error.localizedDescription)")
+            model.controlDiagnostics.record("siri.execute failed=\(error.localizedDescription)")
             if let session = service.sessions.conversations.first(where: { $0.entry?.commandID == command.commandID }) {
                 service.sessions.addNotice(error.localizedDescription, in: session.id)
             }

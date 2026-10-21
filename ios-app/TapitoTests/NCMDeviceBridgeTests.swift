@@ -36,7 +36,7 @@ import ProviderCore
     func connectIfNeeded() throws {
         connectionAttempts += 1
         guard allowsConnectionWait else {
-            if !ready { throw NCMControlError.unavailable(connectionFailure ?? "ESP32 未连接") }
+            if !ready { throw NCMControlError.unavailable(connectionFailure ?? "VPN 回环未连接") }
             return
         }
         if let connectionDelay, connectionTask == nil {
@@ -782,7 +782,6 @@ import ProviderCore
         let id = model.createConversation(mode: .live)
         XCTAssertTrue(model.send("test", in: id, cloudConsent: true))
         XCTAssertTrue(lifecycle.hasLease)
-        XCTAssertFalse(model.capture.active)
         model.setForeground(false)
         for _ in 0..<200 {
             if !model.running && !model.stopping { break }

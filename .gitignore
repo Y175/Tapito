@@ -1,9 +1,6 @@
 research/
 .build/
 device-backups/
-firmware/build/
-firmware/sdkconfig
-firmware/sdkconfig.old
 __pycache__/
 *.pem
 *.key
@@ -14,10 +11,6 @@ __pycache__/
 .env
 .DS_Store
 
-firmware-device/managed_components/
-firmware-device/sdkconfig
-firmware-device/sdkconfig.old
-firmware-device/build/
 
 # Local diagnostics can include device identifiers, network details and host paths.
 # Keep reviewed conclusions in Markdown; retain raw output locally, outside Git.
@@ -43,10 +36,6 @@ firmware-device/build/
 /ios-app/docs/siri-validation/*.json
 
 # Isolated NCM/CoreDevice experiment; diagnostic bytes and build outputs stay local.
-/ncm-dev/firmware/managed_components/
-/ncm-dev/firmware/sdkconfig*
-!/ncm-dev/firmware/sdkconfig.defaults
-/ncm-dev/firmware/build/
 /ncm-dev/TapitoNCM/.build/
 /ncm-dev/TapitoNCM/.swiftpm/
 /ncm-dev/**/pairing*.plist
@@ -61,6 +50,11 @@ firmware-device/build/
 /docs/**/*.jpeg
 # Reviewed architecture diagram referenced by the workflow design documents.
 !/docs/assets/tapito-workflow-model-nodes-v1.png
+!/docs/assets/tapito-architecture-v2.png
+!/docs/assets/tapito-execution-flow-v2.png
+# Reviewed image2 diagrams used by both README languages.
+!/docs/assets/tapito-architecture-v4.png
+!/docs/assets/tapito-execution-flow-v4.png
 /ios-app/docs/**/*.png
 /ios-app/docs/**/*.jpg
 /archives/history/**/*.png

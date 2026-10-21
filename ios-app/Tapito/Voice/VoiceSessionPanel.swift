@@ -6,15 +6,16 @@ struct VoiceSessionPanel: View {
     let controller: TapitoVoiceController
     @ObservedObject var session: VoiceSession
     @State private var entryError: String?
+    @State private var showingDetails = false
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 6) {
             HStack(spacing: 12) {
                 if session.state.phase.isActive {
                     if [.preparing, .executing, .interrupting].contains(session.state.phase) {
-                        ProgressView().tint(.cyan)
-                    } else { Image(systemName: session.state.phase == .speaking ? "waveform" : "mic.fill").foregroundStyle(.cyan) }
-                    Text(title).font(.subheadline.weight(.semibold))
+                        ProgressView().controlSize(.small).tint(.indigo)
+                    } else { Image(systemName: session.state.phase == .speaking ? "waveform" : "mic.fill").foregroundStyle(.indigo) }
+                    Text(title).font(.caption.weight(.semibold)).lineLimit(1)
                     Spacer()
                     if ![.executing, .speaking, .interrupting].contains(session.state.phase) {
                         Button(session.state.phase == .paused ? "恢复" : "暂停") {
@@ -22,30 +23,36 @@ struct VoiceSessionPanel: View {
                             else { session.pause() }
                         }.disabled(session.state.phase == .preparing)
                     }
-                    Button("结束", role: .destructive) { session.end() }
+                    Button("结束", role: .destructive) { session.end() }.frame(minHeight: 44)
                 } else {
                     Button { perform { try await controller.execute() } } label: {
-                        Label("开始连续语音", systemImage: "mic.fill").font(.subheadline.weight(.semibold))
+                        Label("开始连续语音", systemImage: "waveform").font(.subheadline.weight(.semibold))
+                            .frame(minHeight: 44)
                     }
                     Spacer()
-                    Text("Tapito").font(.caption.monospaced().weight(.semibold)).foregroundStyle(.secondary)
+                    Button { showingDetails = true } label: {
+                        Image(systemName: "info.circle").foregroundStyle(.secondary).frame(width: 44, height: 44)
+                    }.accessibilityLabel("语音与隐私说明")
                 }
             }
-            Text("任务执行时关闭麦克风与音频；完成并播报后继续听。执行中可点击“结束”。")
-                .font(.caption2).foregroundStyle(.secondary)
             if let error = entryError ?? session.state.error {
                 Text(error).font(.caption).foregroundStyle(.red).textSelection(.enabled)
-            } else if session.state.phase.isActive {
+            } else if [.listening, .paused].contains(session.state.phase) {
                 Text(session.state.transcript.isEmpty ? "说出任务；等待新任务时可说“结束对话”退出。" : session.state.transcript)
-                    .font(.caption).foregroundStyle(.secondary).lineLimit(2)
-            } else {
-                Text("语音转写和任务所需屏幕内容会发送给所选模型供应商。")
-                    .font(.caption2).foregroundStyle(.secondary)
+                    .font(.caption).foregroundStyle(.secondary).lineLimit(1)
             }
         }
-        .padding(.horizontal, 16).padding(.vertical, 12)
-        .background(.regularMaterial)
+        .padding(.horizontal, 20).padding(.vertical, 2)
         .accessibilityIdentifier("tapito.voice.controls")
+        .popover(isPresented: $showingDetails) {
+            VStack(alignment: .leading, spacing: 12) {
+                Text("连续语音").font(.headline)
+                Text("任务执行时关闭麦克风与音频；完成并播报后继续聆听。你可以随时点击“结束”。")
+                Text("语音转写和任务所需屏幕内容会发送给所选模型供应商。")
+                    .foregroundStyle(.secondary)
+            }.font(.subheadline).padding(20).frame(idealWidth: 300)
+                .presentationCompactAdaptation(.popover)
+        }
     }
     private var title: String {
         switch session.state.phase {

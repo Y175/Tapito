@@ -13,10 +13,10 @@ struct ConnectionSetupSection: View {
             LabeledContent("本机回环", value: vpn.enabled ? "Tapito 内置 VPN" : "外部 VPN")
             Button(vpn.enabled ? "重新配置内置 VPN" : "启用 Tapito 内置 VPN") {
                 perform { try await services.enableEmbeddedVPN() }
-            }.disabled(busy || !PairingFlow.shared.canChangeRoute)
+            }.disabled(busy || !PairingFlow.shared.canChangeConfiguration)
             if vpn.enabled {
                 Button("改用外部 VPN") { perform { try await services.useExternalVPN() } }
-                    .disabled(busy || !PairingFlow.shared.canChangeRoute)
+                    .disabled(busy || !PairingFlow.shared.canChangeConfiguration)
             }
             if let shortcut = Bundle.main.url(forResource: "Tapito 户外初始化", withExtension: "shortcut", subdirectory: "ConnectionResources") {
                 ShareLink(item: shortcut, preview: SharePreview("Tapito 户外初始化")) {
@@ -33,7 +33,7 @@ struct ConnectionSetupSection: View {
                 openURL(url) { accepted in
                     if !accepted { failure = "无法打开快捷指令，请确认已安装系统快捷指令 App" }
                 }
-            }.disabled(!vpn.enabled || busy || !PairingFlow.shared.canChangeRoute)
+            }.disabled(!vpn.enabled || busy || !PairingFlow.shared.canChangeConfiguration)
             if services.outdoorPhase != .idle { Text(phaseText).font(.footnote) }
             if PairingFlow.shared.connectionBootstrapActive {
                 Button("取消初始化", role: .destructive) {

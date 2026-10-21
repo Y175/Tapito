@@ -111,47 +111,6 @@ import XCTest
         XCTAssertTrue(app.staticTexts["最新截图"].exists)
         capture("06-control-debug")
     }
-    func testUSBScreenCaptureRemainsExplicitAndSimulatorReportsUnsupported() {
-        let app = launch()
-        XCTAssertTrue(app.buttons["设置"].waitForExistence(timeout: 10))
-        app.buttons["设置"].tap(); app.buttons["controlDebug"].tap()
-        XCTAssertTrue(app.segmentedControls.buttons["真实模型"].waitForExistence(timeout: 5))
-        app.segmentedControls.buttons["真实模型"].tap()
-        XCTAssertTrue(app.buttons["connectUSBNCM"].waitForExistence(timeout: 5))
-        let usbStatus = app.staticTexts["usbConnectionStatus"]
-        XCTAssertTrue(usbStatus.exists)
-        XCTAssertEqual(usbStatus.label, "USB 尚未连接")
-        XCTAssertGreaterThanOrEqual(usbStatus.frame.minY, app.buttons["connectUSBNCM"].frame.maxY)
-        XCTAssertLessThan(usbStatus.frame.minY - app.buttons["connectUSBNCM"].frame.maxY, 40)
-        XCTAssertTrue(app.staticTexts["此 Simulator SDK 不含 ScreenCaptureKit；需 iOS 27 真机授权"].exists)
-        XCTAssertTrue(app.staticTexts["screenCaptureRouteHelp"].label.contains("无需连接 ESP32"))
-        XCTAssertFalse(app.switches["screenUploadConsent"].exists)
-        XCTAssertFalse(app.switches["usbBackgroundConsent"].exists)
-        XCTAssertTrue(app.staticTexts["screenCaptureBackgroundHelp"].label.contains("固定允许"))
-        XCTAssertTrue(app.staticTexts["screenCaptureBackgroundHelp"].label.contains("无需逐次切回确认"))
-        XCTAssertFalse(app.staticTexts["screenCaptureBackgroundHelp"].label.contains("60 秒"))
-        XCTAssertFalse(app.staticTexts["screenCaptureBackgroundHelp"].label.contains("5 分钟"))
-        XCTAssertFalse(app.buttons["仅在本机预览截图"].isEnabled)
-        XCTAssertFalse(app.buttons["startScreenCapture"].isEnabled)
-        capture("usb-capture-simulator-unavailable")
-        let copy = app.buttons["copyUSBDiagnostics"]
-        if !copy.isHittable { app.scrollViews.firstMatch.swipeUp() }
-        XCTAssertTrue(copy.isHittable)
-        copy.tap()
-        XCTAssertTrue(app.staticTexts["usbDiagnosticsCopied"].waitForExistence(timeout: 3))
-        app.buttons["showUSBDiagnostics"].tap()
-        let report = app.staticTexts["usbDiagnosticsReport"]
-        XCTAssertTrue(report.waitForExistence(timeout: 5))
-        XCTAssertTrue(report.label.contains("Tapito USB Diagnostics v1"))
-        XCTAssertTrue(report.label.contains("usb-diag-pa3-persistent-1"))
-        XCTAssertTrue(report.label.contains("imageExpiry=disabled modelImageIDParameter=false"))
-        XCTAssertTrue(report.label.contains("interfaces reason=export"))
-        XCTAssertTrue(report.label.contains("capture active=false samples=0"))
-        XCTAssertFalse(report.label.contains("connect.begin"), "Exporting diagnostics must not connect")
-        XCTAssertTrue(app.buttons["refreshUSBDiagnostics"].exists)
-        XCTAssertTrue(app.buttons["copyUSBReport"].exists)
-        capture("usb-diagnostics-export")
-    }
     private func pendingDemo(_ app: XCUIApplication) {
         XCTAssertTrue(app.staticTexts["新会话"].waitForExistence(timeout: 10))
         app.staticTexts["新会话"].tap()

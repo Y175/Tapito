@@ -10,6 +10,8 @@ struct ProviderProfile: Identifiable, Codable, Equatable, Sendable {
     var protocolKind: ProviderKind?
     var inferenceKind: InferenceAPI?
     var contextKind: ProviderContextPolicy?
+    /// Explicit main-agent model binding for Jev delegation; never inferred from recent selections.
+    var jevContextSelection: ProviderStore.Selection?
     var catalog: ModelCatalog?
     var modelParameters: [String: ModelParameters]?
     // Non-secret hash of issued-client-ID + verified issuer/subject. Tokens live only in Keychain.
@@ -22,7 +24,7 @@ struct ProviderProfile: Identifiable, Codable, Equatable, Sendable {
         self.keyAccount = keyAccount ?? "provider-profile:\(id):\(settings.baseURL)"
     }
     var providerKind: ProviderKind { protocolKind ?? .openAI }
-    var inferenceAPI: InferenceAPI { providerKind == .chatGPTSubscription ? .responses : inferenceKind ?? .chatCompletions }
+    var inferenceAPI: InferenceAPI { providerKind == .jev ? .systemOne : providerKind == .chatGPTSubscription ? .responses : inferenceKind ?? .chatCompletions }
     var contextPolicy: ProviderContextPolicy { contextKind ?? .stateless }
     func catalogEndpoint() throws -> String { providerKind.rawValue + ":" + (try providerKind.baseURL(settings.baseURL)).absoluteString + (providerKind == .chatGPTSubscription ? ":" + (chatGPTAccountReference ?? "disconnected") : "") }
     var currentCatalog: ModelCatalog? { catalog?.endpoint == (try? catalogEndpoint()) ? catalog : nil }
@@ -55,7 +57,12 @@ struct ProviderProfile: Identifiable, Codable, Equatable, Sendable {
         return result
     }
     func parameters(for model: String) -> ModelParameters { modelParameters?[model] ?? ModelParameters() }
-    func requireInference(model: String) throws {
+    func requireInference(model: String, requiresVision: Bool = true) throws {
+        if providerKind == .jev {
+            guard !model.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+                  contextPolicy == .stateless else { throw AppError.invalid("Jev 需要模型 ID，且不支持响应链。") }
+            return
+        }
         if providerKind == .chatGPTSubscription, chatGPTAccountReference == nil { throw ChatGPTAuthError.disconnected }
         if providerKind == .chatGPTSubscription, currentCatalog?.models.contains(where: { $0.id == model }) != true { throw AppError.unavailable("请刷新此 ChatGPT 账户的模型列表，并选择可用模型") }
         guard inferenceAPI == .chatCompletions || providerKind.supportsResponses else { throw AppError.invalid("此协议仅支持 Chat Completions 推理") }
@@ -63,14 +70,14 @@ struct ProviderProfile: Identifiable, Codable, Equatable, Sendable {
         guard contextPolicy == .stateless || providerKind.supportsResponseChain else { throw AppError.invalid("此供应商不支持服务端响应链；请选择本地回放") }
         guard providerKind.supportsInference else { throw AppError.unavailable(providerKind.inferenceNotice) }
         guard !model.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { throw AppError.invalid("请先选择或手动填写模型 ID") }
-        if let metadata = metadata(for: model), metadata.vision == .unsupported || metadata.tools == .unsupported || metadata.generation == .unsupported {
-            throw AppError.unavailable("供应商明确报告此模型不支持图片、工具或文本生成，不能执行屏幕任务；请选择兼容模型")
+        if let metadata = metadata(for: model), (requiresVision && metadata.vision == .unsupported) || metadata.tools == .unsupported || metadata.generation == .unsupported {
+            throw AppError.unavailable(requiresVision ? "供应商明确报告此模型不支持图片、工具或文本生成，不能执行屏幕任务；请选择兼容模型" : "供应商明确报告此模型不支持工具或文本生成，不能担任主 Agent；请选择兼容模型")
         }
     }
 }
 
 @MainActor final class ProviderStore: ObservableObject {
-    struct Selection: Codable, Equatable {
+    struct Selection: Codable, Equatable, Sendable {
         var providerID: UUID
         var model: String
     }
@@ -104,6 +111,10 @@ struct ProviderProfile: Identifiable, Codable, Equatable, Sendable {
                 lastSelection = saved.lastSelection
                 defaultProviderID = saved.defaultProviderID
                 for index in profiles.indices { profiles[index].selectDefaultModelIfNeeded() }
+                // Retire the generated trial label without overwriting user-chosen provider names or bindings.
+                for index in profiles.indices where profiles[index].providerKind == .jev && profiles[index].name == "Jev OCR（试验）" {
+                    profiles[index].name = "Jev 协同"
+                }
             } else if let data = defaults?.data(forKey: "providerSettings") {
                 let legacy = try JSONDecoder().decode(ProviderSettings.self, from: data)
                 let host = URL(string: legacy.baseURL)?.host ?? "原供应商"
@@ -115,6 +126,17 @@ struct ProviderProfile: Identifiable, Codable, Equatable, Sendable {
     func profile(_ id: UUID?) -> ProviderProfile? {
         guard let id else { return defaultSelection?.profile }
         return profiles.first { $0.id == id }
+    }
+    /// Resolve only the saved binding; removal/invalid configuration must not silently select another account.
+    func jevContextModel(for profile: ProviderProfile) throws -> (profile: ProviderProfile, model: String) {
+        guard let selection = profile.jevContextSelection else {
+            throw AppError.invalid("请在 Jev 供应商设置中选择主 Agent 模型。")
+        }
+        guard let context = profiles.first(where: { $0.id == selection.providerID }), context.providerKind != .jev else {
+            throw AppError.invalid("Jev 绑定的主 Agent 模型已移除或类型不正确，请重新选择。")
+        }
+        try context.requireInference(model: selection.model, requiresVision: false)
+        return (context, selection.model)
     }
     var defaultSelection: (profile: ProviderProfile, model: String)? {
         if let id = defaultProviderID {
@@ -148,7 +170,7 @@ struct ProviderProfile: Identifiable, Codable, Equatable, Sendable {
         value.name = draft.name.trimmingCharacters(in: .whitespacesAndNewlines)
         value.settings.baseURL = draft.settings.baseURL.trimmingCharacters(in: .whitespacesAndNewlines)
         value.settings.model = draft.settings.model.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard value.inferenceAPI == .chatCompletions || value.providerKind.supportsResponses else { throw AppError.invalid("此协议尚不支持 Responses") }
+        guard value.providerKind == .jev || value.inferenceAPI == .chatCompletions || value.providerKind.supportsResponses else { throw AppError.invalid("此协议尚不支持 Responses") }
         guard value.inferenceAPI == .responses || value.contextPolicy == .stateless else { throw AppError.invalid("响应链需要 Responses") }
         if value.inferenceAPI == .responses, value.modelParameters?.values.contains(where: { !($0.values["seed"] ?? "").isEmpty }) == true { throw AppError.invalid("Responses 不支持 seed，请清空该参数") }
         guard value.contextPolicy == .stateless || value.providerKind.supportsResponseChain else { throw AppError.invalid("此供应商不支持服务端响应链") }

@@ -17,12 +17,9 @@ pub type DialFuture<'a> = Pin<Box<dyn Future<Output = io::Result<Stream>> + Send
 pub enum Purpose {
     PairVerify,
     NegotiatedTunnel { port: u16 },
-    LockdownSession,
 }
-/// The embedding app explicitly selects S3 relay or VPN loopback before connecting.
-/// Every call stays on that connector and the same authenticated peer: S3 uses its
-/// discovery generation; VPN loopback uses its configured, bound utun interface.
-/// Neither connector falls back to another route, usbmux, or a Mac.
+/// Every connection uses the configured, bound VPN interface and authenticated peer.
+/// No fallback to another route, usbmux or a Mac.
 pub trait NcmConnector: Send + Sync {
     fn connect(&self, purpose: Purpose) -> DialFuture<'_>;
 }

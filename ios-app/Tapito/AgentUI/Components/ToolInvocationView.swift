@@ -49,6 +49,7 @@ struct ToolInvocationView<Preview: View>: View {
             Text(configuration.tool.title)
                 .font(.body).fontWeight(.regular).foregroundStyle(.secondary)
             Spacer(minLength: 8)
+            StepDurationLabel(timing: configuration.tool.timing, running: !configuration.tool.state.isTerminal && configuration.tool.state != .requested)
             if configuration.tool.state != .succeeded {
                 Text(configuration.tool.state.label).font(.caption).lineLimit(1)
                     .foregroundStyle(statusColor)

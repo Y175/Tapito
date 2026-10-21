@@ -37,6 +37,7 @@ struct TapitoVoiceTaskControl: ControlWidget {
     }
 }
 
+/// Expanded content stays in one bottom region to avoid clipping controls around the sensor.
 struct TapitoLiveActivity: Widget {
     var body: some WidgetConfiguration {
         ActivityConfiguration(for: AgentActivityAttributes.self) { context in
@@ -44,77 +45,60 @@ struct TapitoLiveActivity: Widget {
             Group {
                 if context.state.phase == .standby {
                     Color.clear.frame(height: 1).accessibilityHidden(true)
-                } else {
-                    ActivityCard(context: context)
-                }
+                } else { ActivityCard(context: context) }
             }
-                .activityBackgroundTint(context.state.phase == .standby ? Color.clear : Color.black)
-                .activitySystemActionForegroundColor(.white)
-                .widgetURL(activityURL(context))
+            .activityBackgroundTint(context.state.phase == .standby ? Color.clear : TapitoPalette.ink)
+            .activitySystemActionForegroundColor(.white)
+            .widgetURL(activityURL(context))
         } dynamicIsland: { context in
             let _ = traceActivityContext(context, destination: "island")
             let standby = context.state.phase == .standby
-            let stale = context.isStale && !context.state.phase.isTerminal
+            let presentation = AgentActivityPresentation(state: context.state, isStale: context.isStale)
             return DynamicIsland {
                 DynamicIslandExpandedRegion(.leading) {
                     if !standby {
-                        Label((context.state.isDemo ?? context.attributes.isDemo) ? "\(AppIdentity.displayName) · 离线演示" : AppIdentity.displayName, systemImage: "sparkles")
-                            .font(.caption).foregroundStyle(.secondary)
+                        HStack(spacing: 6) {
+                            AgentActivityIndicator(presentation: presentation, surface: .liveActivity, size: 19)
+                            Text((context.state.isDemo ?? context.attributes.isDemo) ? "Tapito · 演示" : "Tapito")
+                                .font(.caption.weight(.semibold)).foregroundStyle(.white.opacity(0.7))
+                        }
                     }
                 }
-                DynamicIslandExpandedRegion(.center) {
+                DynamicIslandExpandedRegion(.trailing) {
                     if !standby {
-                        Label(stale ? "查看" : context.state.title,
-                              systemImage: stale ? "exclamationmark.circle" : context.state.symbol)
-                            .font(.headline).foregroundStyle(activityTint(context)).lineLimit(2)
+                        Text(presentation.compactTitle).font(.caption.weight(.semibold))
+                            .foregroundStyle(presentation.needsAttention ? .orange : TapitoPalette.accent)
                     }
                 }
                 DynamicIslandExpandedRegion(.bottom) {
                     if !standby {
                         VStack(alignment: .leading, spacing: 8) {
-                            if context.state.completedTools > 0 {
-                                Text("本轮已处理 \(context.state.completedTools) 次操作")
-                                    .font(.caption).monospacedDigit().foregroundStyle(.secondary)
+                            HStack {
+                                Text(presentation.title).font(.subheadline.weight(.semibold)).lineLimit(1)
+                                Spacer(minLength: 6)
+                                if context.state.completedTools > 0 {
+                                    Text("\(context.state.completedTools) 项").font(.caption.monospacedDigit())
+                                        .foregroundStyle(.white.opacity(0.5))
+                                        .accessibilityLabel("已处理 \(context.state.completedTools) 项工具调用")
+                                }
                             }
-                            if stale || !context.state.phase.detail.isEmpty {
-                                Text(stale ? "状态已过期；执行情况需在 App 核对" : context.state.phase.detail)
-                                    .font(.caption).foregroundStyle(.secondary)
-                            }
-                            // The island has a bounded height; both controls share one row.
-                            HStack(spacing: 8) {
-                                VoiceEndButton(context: context)
-                                Link(destination: activityURL(context)) {
-                                    Label(!stale && context.state.phase == .awaitingApproval ? "查看并确认" : "查看会话", systemImage: "arrow.up.forward.app")
-                                        .font(.subheadline.weight(.semibold)).lineLimit(1)
-                                        .frame(maxWidth: .infinity, minHeight: 44)
-                                        .background(.white.opacity(0.12), in: Capsule())
-                                }.tint(.white)
-                            }
-                        }
+                            if let step = presentation.step { AgentStepStrip(active: step) }
+                            ActivityActions(context: context)
+                        }.foregroundStyle(.white).padding(.top, 3)
                     }
                 }
             } compactLeading: {
-                if !standby {
-                    Image(systemName: "sparkles").foregroundStyle(.cyan)
-                }
+                if !standby { AgentActivityIndicator(presentation: presentation, surface: .liveActivity, size: 19) }
             } compactTrailing: {
                 if !standby {
-                    HStack(spacing: 3) {
-                        if !stale && [.thinking, .voicePreparing, .pausing].contains(context.state.phase) {
-                            ProgressView().controlSize(.mini).tint(.cyan)
-                        } else {
-                            Image(systemName: stale ? "exclamationmark.circle" : context.state.symbol)
-                        }
-                        Text(stale ? "查看" : context.state.compactTitle).lineLimit(1)
-                    }.font(.caption2).foregroundStyle(activityTint(context))
+                    Text(presentation.compactTitle).font(.caption2.weight(.semibold))
+                        .foregroundStyle(presentation.needsAttention ? .orange : TapitoPalette.accent)
                 }
             } minimal: {
-                if !standby {
-                    Image(systemName: stale ? "exclamationmark.circle" : context.state.symbol).foregroundStyle(activityTint(context))
-                }
+                if !standby { AgentActivityIndicator(presentation: presentation, surface: .liveActivity, size: 18) }
             }
             .widgetURL(activityURL(context))
-            .keylineTint(standby ? Color.clear : activityTint(context))
+            .keylineTint(standby ? .clear : presentation.needsAttention ? .orange : TapitoPalette.accent)
         }
     }
 }
@@ -122,52 +106,50 @@ struct TapitoLiveActivity: Widget {
 private func activityURL(_ context: ActivityViewContext<AgentActivityAttributes>) -> URL {
     context.state.route(attributes: context.attributes)?.url ?? URL(string: "tapito://home")!
 }
-private func activityTint(_ context: ActivityViewContext<AgentActivityAttributes>) -> Color {
-    context.isStale || context.state.phase == .awaitingApproval ? .orange : .cyan
-}
+
 private struct ActivityCard: View {
     let context: ActivityViewContext<AgentActivityAttributes>
-    private var stale: Bool { context.isStale && !context.state.phase.isTerminal }
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: 12) {
             HStack {
-                Label((context.state.isDemo ?? context.attributes.isDemo) ? "\(AppIdentity.displayName) · 离线演示" : AppIdentity.displayName, systemImage: "sparkles")
-                    .font(.caption).foregroundStyle(.white.opacity(0.7))
+                Text("TAPITO").font(.caption2.weight(.bold)).tracking(2)
                 Spacer()
-            }
-            Label(stale ? "请回到 App" : context.state.title,
-                  systemImage: stale ? "exclamationmark.circle" : context.state.symbol)
-                .font(.headline).foregroundStyle(activityTint(context))
-            if stale || !context.state.phase.detail.isEmpty {
-                Text(stale ? "状态已过期；执行情况需在 App 核对" : context.state.phase.detail)
-                    .font(.caption).foregroundStyle(.white.opacity(0.7))
-            }
-            HStack(spacing: 8) {
-                VoiceEndButton(context: context)
-                Link(destination: activityURL(context)) {
-                    Label(!stale && context.state.phase == .awaitingApproval ? "查看并确认" : "查看会话", systemImage: "arrow.up.forward.app")
-                        .font(.subheadline.weight(.semibold)).lineLimit(1)
-                        .frame(maxWidth: .infinity, minHeight: 44)
-                        .background(.white.opacity(0.12), in: Capsule())
-                }.tint(.white)
-            }
-        }.foregroundStyle(.white).padding(16)
+                if context.state.isDemo ?? context.attributes.isDemo { Text("离线演示").font(.caption2) }
+            }.foregroundStyle(.white.opacity(0.5))
+            AgentProgressSummary(presentation: .init(state: context.state, isStale: context.isStale), surface: .liveActivity)
+            ActivityActions(context: context)
+        }.padding(16)
     }
 }
 
-/// A real intent button ends capture in place; the separate link still opens task details.
-private struct VoiceEndButton: View {
+/// Stop is always scoped to the identity on this card. Approval still requires the app's evidence view.
+private struct ActivityActions: View {
     let context: ActivityViewContext<AgentActivityAttributes>
     var body: some View {
-        if let id = context.state.activeVoiceSessionID(attributes: context.attributes) {
-            Button(intent: EndVoiceSessionIntent(sessionID: id)) {
-                Label("结束语音", systemImage: "stop.circle.fill")
-                    .font(.subheadline.weight(.semibold)).lineLimit(1)
-                    .frame(maxWidth: .infinity, minHeight: 44)
-                    .background(.red.opacity(0.28), in: Capsule())
+        HStack(spacing: 8) {
+            if let voiceID = context.state.activeVoiceSessionID(attributes: context.attributes) {
+                Button(intent: EndVoiceSessionIntent(sessionID: voiceID)) {
+                    actionLabel("结束语音", symbol: "stop.fill", destructive: true)
+                }
+                .buttonStyle(.plain).accessibilityIdentifier("tapito.voice.endActivity")
+            } else if !context.state.phase.isTerminal, context.state.phase != .standby,
+                      let route = context.state.route(attributes: context.attributes) {
+                Button(intent: StopActivityTaskIntent(sessionID: route.sessionID, runID: route.runID)) {
+                    actionLabel("停止任务", symbol: "stop.fill", destructive: true)
+                }
+                .buttonStyle(.plain).accessibilityIdentifier("tapito.task.stopActivity")
             }
-            .buttonStyle(.plain).foregroundStyle(.red)
-            .accessibilityIdentifier("tapito.voice.endActivity")
+            Link(destination: activityURL(context)) {
+                actionLabel(context.state.phase == .awaitingApproval ? "查看并确认" : "查看会话",
+                            symbol: "arrow.up.right", destructive: false)
+            }
         }
+    }
+    private func actionLabel(_ title: String, symbol: String, destructive: Bool) -> some View {
+        Label(title, systemImage: symbol)
+            .font(.caption.weight(.semibold)).lineLimit(1).minimumScaleFactor(0.8)
+            .frame(maxWidth: .infinity, minHeight: 44)
+            .foregroundStyle(destructive ? Color(red: 1, green: 0.48, blue: 0.52) : .white)
+            .background(destructive ? Color.red.opacity(0.18) : Color.white.opacity(0.10), in: Capsule())
     }
 }

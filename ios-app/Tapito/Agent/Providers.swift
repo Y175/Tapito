@@ -295,7 +295,7 @@ struct SkillFixtureProvider: ModelProvider {
 // Its second turn only answers if the failed tool result actually reaches it.
 struct ToolErrorFixtureProvider: ModelProvider {
     static let name = "offline-tool-error-fixture"
-    static let reply = "当前尚未授权全屏采集。请先授权 App 采集，再试一次；查看屏幕无需连接 ESP32。"
+    static let reply = "当前设备未连接。请先建立 VPN 回环连接，再试一次。"
     var initialText = ""
     var finalReply = Self.reply
     let configuration = ProviderConfiguration(name: Self.name, baseURL: URL(string: "https://invalid.invalid")!, defaultModel: "fixture")

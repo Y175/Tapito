@@ -5,6 +5,46 @@ import ProviderCore
 @testable import Tapito
 
 @MainActor final class ConversationTests: XCTestCase {
+    func testModelTimingAndToolTimingPersistWithoutLosingToolOnlyModelTurns() throws {
+        let directory = try temporaryDirectory(), store = ConversationStore(directory: directory)
+        let id = store.create(mode: .live), run = try XCTUnwrap(store.begin(in: id, query: "计时"))
+        store.beginAssistantTurn(run, modelTurn: 1)
+        store.completeAssistantTurn("", durationSeconds: 2.125, identity: run)
+        store.updateTool(callID: "ocr", name: "observe_screen", state: .requested, identity: run)
+        XCTAssertNil(store.conversation(id)?.messages.last?.tool?.timing)
+        store.updateTool(callID: "ocr", name: "observe_screen", state: .running, identity: run)
+        store.updateTool(callID: "ocr", name: "observe_screen", state: .succeeded, durationSeconds: 0.234, identity: run)
+        store.finish(run, phase: .completed, summary: "")
+        let messages = try XCTUnwrap(ConversationStore(directory: directory).conversation(id)).messages
+        let model = try XCTUnwrap(messages.first { $0.modelTurn == 1 })
+        XCTAssertEqual(model.timing?.durationSeconds, 2.125)
+        XCTAssertTrue(model.text.isEmpty)
+        XCTAssertEqual(messages.last?.tool?.timing?.durationSeconds, 0.234)
+        let turn = try XCTUnwrap(ConversationTurn.group(messages).first)
+        XCTAssertEqual(turn.summaryLabel, "1 次模型请求 · 1 次工具调用")
+        XCTAssertTrue(turn.foldedMessages.contains { $0.id == model.id })
+    }
+    func testStopFreezesMeasuredWaitAndLateCallbackCannotOverwriteIt() throws {
+        let store = ConversationStore(inMemory: true), id = store.create(mode: .live)
+        let run = try XCTUnwrap(store.begin(in: id, query: "stop"))
+        store.beginAssistantTurn(run, modelTurn: 1)
+        store.finish(run, phase: .stopped, summary: "")
+        let stopped = try XCTUnwrap(store.conversation(id)?.messages.last)
+        XCTAssertEqual(stopped.state, .interrupted)
+        XCTAssertNotNil(stopped.timing?.durationSeconds)
+        store.completeAssistantTurn("late", durationSeconds: 999, identity: run)
+        XCTAssertEqual(store.conversation(id)?.messages.last, stopped)
+    }
+    func testProcessRecoveryDoesNotInventElapsedTimeSinceLastLaunch() throws {
+        let directory = try temporaryDirectory(), store = ConversationStore(directory: directory)
+        let id = store.create(mode: .live), run = try XCTUnwrap(store.begin(in: id, query: "recovery"))
+        store.beginAssistantTurn(run, modelTurn: 1)
+        store.saveNow()
+        let recovered = try XCTUnwrap(ConversationStore(directory: directory).conversation(id)?.messages.last)
+        XCTAssertEqual(recovered.state, .interrupted)
+        XCTAssertNotNil(recovered.timing?.startedAt)
+        XCTAssertNil(recovered.timing?.durationSeconds)
+    }
     func testTurnSummaryGroupsWholeRunsAndCountsOnlyNonemptyThoughtsAndToolCalls() {
         let first = UUID(), second = UUID()
         let messages = [

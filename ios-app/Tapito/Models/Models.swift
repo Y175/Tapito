@@ -29,17 +29,6 @@ struct TaskRecord: Identifiable, Codable {
         receipts.append(Receipt(message)); receipts = Array(receipts.suffix(100)); updatedAt = Date()
     }
 }
-struct FrameImage: Sendable {
-    let id: String
-    // Retained property name for the original PNG route; NCM video emits JPEG.
-    let png: Data
-    var mimeType: String { png.starts(with: [0xff, 0xd8, 0xff]) ? "image/jpeg" : "image/png" }
-    let width: Int
-    let height: Int
-    let capturedAt: Date
-    let isDemo: Bool
-    var capture: CaptureStamp? = nil
-}
 struct Approval: Identifiable, Sendable {
     let id = UUID()
     let tool: String
@@ -59,21 +48,6 @@ struct AgentLimits: Sendable {
     let maxOutputTokens: Int? = nil
     /// Explicit program budget includes routing, exploration, correction and final synthesis.
     let workflowModelCalls = 32
-}
-enum AppError: LocalizedError, Equatable {
-    case invalid(String), unavailable(String), protocolViolation(String), stopped, timeout, unknownOutcome
-    /// A local, unsent input needs visual inspection; the valid OCR frame can still be reused.
-    case observationRequired(String)
-    /// Screen-service preparation failed before capture/input; the task must not keep restarting it.
-    case screenCaptureUnavailable(String)
-    var errorDescription: String? {
-        switch self {
-        case .invalid(let s), .unavailable(let s), .protocolViolation(let s), .observationRequired(let s), .screenCaptureUnavailable(let s): return s
-        case .stopped: return "已停止"
-        case .timeout: return "桥接超时，已断开；没有自动重发动作"
-        case .unknownOutcome: return "动作结果未知；未自动重发。"
-        }
-    }
 }
 struct ProviderSettings: Codable, Equatable, Sendable {
     var baseURL = "https://api.openai.com/v1"

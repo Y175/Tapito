@@ -51,6 +51,35 @@ import SwiftAgentKit
         XCTAssertEqual(sessions.conversation(id)?.providerID, first.id)
         sessions.finish(run, phase: .completed, summary: "")
     }
+    func testJevBindingPersistsAndNeverFallsBackAfterRemoval() throws {
+        let defaults = defaults(), store = ProviderStore(defaults: defaults)
+        let llm = ProviderProfile(name: "Context", settings: .init(baseURL: "https://example.com/v1", model: "fixture"))
+        var jev = ProviderProfile(name: "Jev", settings: .init(baseURL: "https://api.typesafe.ai/v1", model: "jev-1.14.0"))
+        jev.protocolKind = .jev
+        try store.save(llm)
+        XCTAssertThrowsError(try store.jevContextModel(for: jev))
+        jev.jevContextSelection = .init(providerID: llm.id, model: "explicit-model")
+        try store.save(jev)
+        let restored = ProviderStore(defaults: defaults)
+        let loaded = try XCTUnwrap(restored.profile(jev.id))
+        XCTAssertEqual(loaded.jevContextSelection, jev.jevContextSelection)
+        XCTAssertEqual(try restored.jevContextModel(for: loaded).model, "explicit-model")
+        try restored.remove(llm.id)
+        XCTAssertThrowsError(try restored.jevContextModel(for: loaded))
+        jev.jevContextSelection = .init(providerID: jev.id, model: "jev-1.14.0")
+        XCTAssertThrowsError(try restored.jevContextModel(for: jev))
+    }
+    func testJevContextAcceptsTextOnlyToolsModelButNotMissingGeneration() throws {
+        var profile = ProviderProfile(settings: .init(baseURL: "https://example.com/v1", model: "text-only"))
+        var metadata = DiscoveredModel(id: "text-only", name: "Text", vision: .unsupported, tools: .supported, generation: .supported)
+        profile.catalog = .init(endpoint: try profile.catalogEndpoint(), fetchedAt: Date(), models: [metadata])
+        XCTAssertNoThrow(try profile.requireInference(model: "text-only", requiresVision: false))
+        XCTAssertThrowsError(try profile.requireInference(model: "text-only"))
+        metadata.generation = .unsupported
+        profile.catalog?.models = [metadata]
+        XCTAssertThrowsError(try profile.requireInference(model: "text-only", requiresVision: false))
+        XCTAssertThrowsError(try profile.requireInference(model: "", requiresVision: false))
+    }
     func testCorruptProviderArchiveIsPreservedAndCannotBeOverwritten() {
         let defaults = defaults(), data = Data("broken".utf8)
         defaults.set(data, forKey: ProviderStore.storageKey)
@@ -158,22 +187,6 @@ final class RunCleanupTests: XCTestCase {
         let count = await bridge.inputs; XCTAssertEqual(count, 18)
         await actions.stop()
     }
-    func testHealthObserversShareOneScheduleAndLoseAuthorityExactlyOnce() async throws {
-        let frames = LatestScreenFrame(), epoch = frames.begin()
-        var pixel: CVPixelBuffer?
-        XCTAssertEqual(CVPixelBufferCreate(kCFAllocatorDefault, 8, 4, kCVPixelFormatType_32BGRA, nil, &pixel), kCVReturnSuccess)
-        frames.put(try XCTUnwrap(pixel), orientation: 1, presentationSeconds: 1, epoch: epoch)
-        let context = try ScreenUSBExecutionContext(frames: frames, backgroundEnabled: true)
-        let first = expectation(description: "model loss"), second = expectation(description: "lease loss")
-        let a = context.observeHealth { first.fulfill() }, b = context.observeHealth { second.fulfill() }
-        XCTAssertEqual(context.healthMonitorStarts, 1)
-        try await Task.sleep(nanoseconds: 150_000_000)
-        XCTAssertNoThrow(try context.requireHealthy())
-        frames.invalidate()
-        await fulfillment(of: [first, second], timeout: 2)
-        XCTAssertThrowsError(try context.requireHealthy())
-        context.removeHealthObserver(a); context.removeHealthObserver(b)
-    }
 }
 
 private final class LongRunProvider: ModelProvider, @unchecked Sendable {
@@ -220,26 +233,5 @@ private final class LongRunProvider: ModelProvider, @unchecked Sendable {
         XCTAssertEqual(sessions.conversation(id)?.messages.compactMap(\.tool).count, 14)
         XCTAssertEqual(sessions.conversation(id)?.messages.last?.text, "Observed fourteen frames")
         let releases = await bridge.releases; XCTAssertEqual(releases, 1)
-    }
-}
-
-private final class MonotonicTestClock: @unchecked Sendable {
-    private let lock = NSLock()
-    private var time: TimeInterval = 100
-    func read() -> TimeInterval { lock.withLock { time } }
-    func set(_ value: TimeInterval) { lock.withLock { time = value } }
-}
-final class HeartbeatSamplingTests: XCTestCase {
-    func testLiveClockValidatesNewReceiptAndStillRejectsTimeoutOrDisconnect() throws {
-        let health = USBTransportHealth(), clock = MonotonicTestClock(), token = UUID()
-        health.begin(token); health.receivedPing(token, now: clock.read())
-        let earlierSample = clock.read()
-        clock.set(100.1); health.receivedPing(token, now: clock.read())
-        XCTAssertThrowsError(try health.requireHealthy(now: earlierSample), "A stale pre-lock sample reproduces the old false failure")
-        XCTAssertNoThrow(try health.requireHealthy(clock: { clock.read() }))
-        clock.set(100.86)
-        XCTAssertThrowsError(try health.requireHealthy(clock: { clock.read() }))
-        health.receivedPing(token, now: clock.read()); health.invalidate(token)
-        XCTAssertThrowsError(try health.requireHealthy(clock: { clock.read() }))
     }
 }

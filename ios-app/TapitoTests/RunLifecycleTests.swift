@@ -124,7 +124,7 @@ import ProviderCore
     func testSystemTaskGrantAndExpirationWorkWithoutMediaPlayback() throws {
         let activity = PiPExecutionActivity(), system = FakeScheduler()
         let scheduler = RunExecutionScheduler(continued: system, activity: activity)
-        scheduler.configure(context: nil, allowSystemProcessing: true,
+        scheduler.configure(allowSystemProcessing: true,
                             useSystemProcessing: BackgroundPlaybackMode.systemTask.usesSystemProcessing)
         let lifecycle = RunLifecycleCoordinator(scheduler: scheduler, storage: MemoryRunCheckpointStore())
         try lifecycle.begin(identity: identity, generation: token)
@@ -412,7 +412,7 @@ import ProviderCore
         for mode in BackgroundPlaybackMode.allCases where !mode.usesSystemProcessing {
             let activity = PiPExecutionActivity(), owner = UUID(), system = FakeScheduler()
             let scheduler = RunExecutionScheduler(continued: system, activity: activity)
-            scheduler.configure(context: nil, allowSystemProcessing: true)
+            scheduler.configure(allowSystemProcessing: true)
             let lifecycle = RunLifecycleCoordinator(scheduler: scheduler, storage: MemoryRunCheckpointStore())
             try lifecycle.begin(identity: identity, generation: token)
             XCTAssertTrue(lifecycle.hasLease)
@@ -457,11 +457,11 @@ import ProviderCore
     func testExecutionSourceIsExclusiveAndCancellationUsesOriginalOwner() throws {
         let continued = FakeScheduler(), scheduler = RunExecutionScheduler(continued: FakeScheduler())
         let routed = RunExecutionScheduler(continued: continued)
-        routed.configure(context: nil, allowSystemProcessing: true,
+        routed.configure(allowSystemProcessing: true,
                          useSystemProcessing: BackgroundPlaybackMode.systemTask.usesSystemProcessing)
         try routed.submit(identifier: "system", launched: { _ in })
         XCTAssertEqual(continued.identifiers, ["system"])
-        routed.configure(context: nil, allowSystemProcessing: false)
+        routed.configure(allowSystemProcessing: false)
         XCTAssertThrowsError(try routed.submit(identifier: "foreground", launched: { _ in }))
         routed.cancel(identifier: "system")
         XCTAssertEqual(continued.cancellations, ["system"])
@@ -717,7 +717,7 @@ private actor BackgroundSpyBridge: DeviceBridge {
     init(uncertain: Bool = false) { self.uncertain = uncertain }
     func supportsBackgroundExecution(tool: String) async -> Bool { true }
     func approvalContext(imageID: String) async throws -> String { deviceSession }
-    func screenshot() async throws -> FrameImage { .init(id: "fresh", png: Data(), width: 390, height: 844, capturedAt: Date(), isDemo: true) }
+    func screenshot() async throws -> FrameImage { try await DemoBridge().screenshot() }
     func tap(x: Int, y: Int, imageID: String) async throws { sent += 1; if uncertain { throw AppError.unknownOutcome } }
     func drag(fromX: Int, fromY: Int, toX: Int, toY: Int, durationMS: Int, imageID: String) async throws { sent += 1 }
     func stop() async { closed = true }

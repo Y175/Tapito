@@ -1,14 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //! Real protocol backend for an iOS-hosted controller. All device I/O must be
-//! provided by an NCM/S3 or VPN loopback connector; this backend does not discover a Mac tunnel or
+//! provided by a VPN loopback connector; this backend does not discover a Mac tunnel or
 //! read/write a pairing file. Nothing runs just by linking this static library.
 mod ffi;
 mod media;
-mod relay;
 mod local_vpn;
 mod video;
-pub use relay::RelayConnector;
-pub mod lockdown;
 mod png;
 mod transport;
 pub use idevice::remote_pairing::{RpPairingFile, VerifiedPeerIdentity};
@@ -335,7 +332,7 @@ impl Session {
             ScreenCaptureServiceClient::connect_rsd(&mut self.adapter, &mut self.handshake),
         )
         .await?;
-        // A full-screen PNG can be several MiB. The ESP32 relay and background
+        // A full-screen PNG can be several MiB. The VPN connection and background
         // TCP scheduling need a transfer budget distinct from small handshakes.
         // This remains one read-only request, never a retry of an input action.
         let png = bounded_for(

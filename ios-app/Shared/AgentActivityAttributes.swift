@@ -1,9 +1,8 @@
-import ActivityKit
 import Foundation
 
 /// This is the complete system-visible payload. Never add user text, tool
 /// arguments, image identifiers, screenshots, endpoints or receipts here.
-struct AgentActivityAttributes: ActivityAttributes {
+struct AgentActivityAttributes: Codable {
     let sessionID: UUID
     let runID: UUID
     let isDemo: Bool
@@ -22,6 +21,8 @@ struct AgentActivityAttributes: ActivityAttributes {
         // A voice activity spans multiple runs; navigation still uses the actual run identity.
         var isVoiceSession: Bool? = nil
         var voiceRunID: UUID? = nil
+        /// Application-owned execution stage. No private reasoning enters system UI.
+        var step: Step? = nil
         /// Resident activities carry the current voice identity in mutable content.
         func activeVoiceSessionID(attributes: AgentActivityAttributes) -> UUID? {
             guard isVoiceSession == true, !phase.isTerminal, phase != .standby else { return nil }
@@ -60,11 +61,37 @@ struct AgentActivityAttributes: ActivityAttributes {
         }
     }
 
+    /// Repeated stages are a cycle, not a percentage or a fixed four-step plan.
+    enum Step: String, Codable, Hashable, CaseIterable {
+        case planning, observing, acting, verifying, correcting, answering
+        var title: String {
+            switch self {
+            case .planning: return "规划"
+            case .observing: return "观察"
+            case .acting: return "操作"
+            case .verifying: return "核验"
+            case .correcting: return "纠错"
+            case .answering: return "整理"
+            }
+        }
+        var detail: String {
+            switch self {
+            case .planning: return "确定下一步"
+            case .observing: return "读取当前屏幕"
+            case .acting: return "执行本次操作"
+            case .verifying: return "检查操作结果"
+            case .correcting: return "调整后续步骤"
+            case .answering: return "整理任务答复"
+            }
+        }
+    }
+
     enum Operation: String, Codable, Hashable {
-        case screenshot, apps, tap, drag, home, launch, text, skill, processing
+        case screenshot, apps, tap, drag, home, launch, text, skill, processing, ocr, workflow, waiting
         static func tool(_ name: String) -> Self {
             switch name {
-            case "screenshot", "observe_screen": return .screenshot
+            case "screenshot": return .screenshot
+            case "observe_screen": return .ocr
             case "list_apps": return .apps
             case "tap", "tap_text": return .tap
             case "drag": return .drag
@@ -72,6 +99,8 @@ struct AgentActivityAttributes: ActivityAttributes {
             case "launch_app": return .launch
             case "type_text": return .text
             case "load_skill": return .skill
+            case "run_workflow", "run_page": return .workflow
+            case "wait": return .waiting
             default: return .processing
             }
         }
@@ -81,6 +110,9 @@ struct AgentActivityAttributes: ActivityAttributes {
             case .tap, .drag, .home, .launch, .text: return "pointer.arrow.ipad"
             case .skill: return "book.closed"
             case .processing: return "gearshape"
+            case .ocr: return "text.viewfinder"
+            case .workflow: return "arrow.triangle.branch"
+            case .waiting: return "hourglass"
             }
         }
         var compactTitle: String {
@@ -94,6 +126,9 @@ struct AgentActivityAttributes: ActivityAttributes {
             case .text: return "输入"
             case .skill: return "技能"
             case .processing: return "处理"
+            case .ocr: return "识字"
+            case .workflow: return "流程"
+            case .waiting: return "等待"
             }
         }
         var title: String {
@@ -107,6 +142,17 @@ struct AgentActivityAttributes: ActivityAttributes {
             case .text: return "正在输入文本"
             case .skill: return "正在读取技能"
             case .processing: return "正在处理"
+            case .ocr: return "本机识别文字"
+            case .workflow: return "执行已知流程"
+            case .waiting: return "等待页面就绪"
+            }
+        }
+        var step: Step? {
+            switch self {
+            case .screenshot, .ocr: return .observing
+            case .apps, .skill: return .planning
+            case .tap, .drag, .home, .launch, .text, .workflow: return .acting
+            case .processing, .waiting: return nil
             }
         }
     }

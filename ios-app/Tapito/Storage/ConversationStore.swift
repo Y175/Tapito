@@ -1,5 +1,6 @@
 import Foundation
 import Combine
+import TapitoAgentCore
 
 /// UI history contains public text, resource references, tool results
 /// and explicit readable provider reasoning; no image bytes, opaque reasoning,
@@ -20,6 +21,8 @@ import Combine
     @Published private(set) var warning: String?
     private let file: URL?
     private var canWrite = true
+    /// Message-scoped clocks never survive process restart or cross conversation boundaries.
+    private var stepTimers: [UUID: ExecutionStopwatch] = [:]
     private var saveTask: Task<Void, Never>?
     private struct Archive: Codable { var version = 1; var conversations: [AgentConversation] }
 
@@ -181,9 +184,14 @@ import Combine
         return identity
     }
     func accepts(_ identity: RunIdentity) -> Bool { activeRuns[identity.conversationID] == identity }
-    func beginAssistantTurn(_ identity: RunIdentity) {
+    func beginAssistantTurn(_ identity: RunIdentity, modelTurn: Int? = nil) {
         guard accepts(identity), let index = index(identity.conversationID) else { return }
-        records[index].messages.append(ChatMessage(runID: identity.runID, role: .assistant, text: "", state: .streaming))
+        var message = ChatMessage(runID: identity.runID, role: .assistant, text: "", state: .streaming, modelTurn: modelTurn)
+        if modelTurn != nil {
+            let timer = ExecutionStopwatch(); stepTimers[message.id] = timer
+            message.timing = StepTiming(startedAt: timer.startedAt)
+        }
+        records[index].messages.append(message)
         touch(index); scheduleSave()
     }
     func appendText(_ text: String, identity: RunIdentity) {
@@ -201,13 +209,14 @@ import Combine
         records[index].messages[message].reasoning?.text += text
         touch(index); scheduleSave()
     }
-    func completeAssistantTurn(_ text: String, reasoning: String? = nil, identity: RunIdentity) {
+    func completeAssistantTurn(_ text: String, reasoning: String? = nil, durationSeconds: TimeInterval? = nil, identity: RunIdentity) {
         guard accepts(identity), let index = index(identity.conversationID),
               let message = records[index].messages.lastIndex(where: { $0.runID == identity.runID && $0.role == .assistant && $0.state == .streaming }) else { return }
         if let reasoning, !reasoning.isEmpty {
             records[index].messages[message].reasoning = ReasoningMessage(text: reasoning, state: .complete)
         }
-        if text.isEmpty && records[index].messages[message].reasoning == nil { records[index].messages.remove(at: message) }
+        finishTiming(at: index, message: message, measured: durationSeconds)
+        if text.isEmpty && records[index].messages[message].reasoning == nil && records[index].messages[message].modelTurn == nil { records[index].messages.remove(at: message) }
         else {
             records[index].messages[message].text = String(text.prefix(16_000))
             records[index].messages[message].state = .complete
@@ -215,7 +224,16 @@ import Combine
         }
         touch(index); saveNow()
     }
-    func updateTool(callID: String, name: String, state: ToolStepState, detail: String = "", result: String = "", arguments: String? = nil, skillName: String? = nil, identity: RunIdentity) {
+    /// Preserve the failed model row and its measured wait without inventing reply text.
+    func failAssistantTurn(durationSeconds: TimeInterval, identity: RunIdentity) {
+        guard accepts(identity), let index = index(identity.conversationID),
+              let message = records[index].messages.lastIndex(where: { $0.runID == identity.runID && $0.role == .assistant && $0.state == .streaming }) else { return }
+        finishTiming(at: index, message: message, measured: durationSeconds)
+        records[index].messages[message].state = .failed
+        records[index].messages[message].reasoning?.state = .failed
+        touch(index); saveNow()
+    }
+    func updateTool(callID: String, name: String, state: ToolStepState, detail: String = "", result: String = "", arguments: String? = nil, skillName: String? = nil, durationSeconds: TimeInterval? = nil, identity: RunIdentity) {
         guard accepts(identity), let index = index(identity.conversationID) else { return }
         if let message = records[index].messages.firstIndex(where: { $0.runID == identity.runID && $0.tool?.callID == callID }) {
             let previous = records[index].messages[message].tool?.state
@@ -233,6 +251,13 @@ import Combine
         } else {
             let tool = ToolStep(callID: callID, name: name, state: state, detail: String(detail.prefix(500)), result: result, arguments: arguments.map { String($0.prefix(4_000)) }, skillName: skillName.map { String($0.prefix(80)) })
             records[index].messages.append(ChatMessage(runID: identity.runID, role: .tool, text: "", tool: tool))
+        }
+        if let message = records[index].messages.firstIndex(where: { $0.runID == identity.runID && $0.tool?.callID == callID }) {
+            if [.running, .executing, .awaitingApproval, .approved].contains(state), records[index].messages[message].tool?.timing == nil {
+                let timer = ExecutionStopwatch(); stepTimers[records[index].messages[message].id] = timer
+                records[index].messages[message].tool?.timing = StepTiming(startedAt: timer.startedAt)
+            }
+            if state.isTerminal { finishTiming(at: index, message: message, measured: durationSeconds) }
         }
         if state == .awaitingApproval { records[index].phase = .awaitingApproval }
         else if [.approved, .executing, .succeeded, .failed].contains(state) { records[index].phase = .running }
@@ -291,8 +316,17 @@ import Combine
             }
         }
     }
+    /// Close a live interval once. A restored unfinished record remains explicitly unmeasured.
+    private func finishTiming(at index: Int, message: Int, measured: TimeInterval? = nil) {
+        let clock = stepTimers.removeValue(forKey: records[index].messages[message].id)
+        guard let seconds = measured ?? clock?.seconds else { return }
+        if records[index].messages[message].tool != nil {
+            records[index].messages[message].tool?.timing?.durationSeconds = seconds
+        } else { records[index].messages[message].timing?.durationSeconds = seconds }
+    }
     private func closePendingMessages(at index: Int, state terminalState: MessageState = .interrupted, cancelled: Bool = false) {
         for message in records[index].messages.indices {
+            finishTiming(at: index, message: message)
             if records[index].messages[message].state == .streaming { records[index].messages[message].state = terminalState }
             if records[index].messages[message].reasoning?.state == .streaming { records[index].messages[message].reasoning?.state = terminalState }
             if let state = records[index].messages[message].tool?.state, !state.isTerminal {

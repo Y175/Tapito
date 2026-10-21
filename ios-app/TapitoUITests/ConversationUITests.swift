@@ -156,7 +156,7 @@ import XCTest
     private func launch(demo: Bool = false) -> XCUIApplication {
         continueAfterFailure = false
         let app = XCUIApplication()
-        app.launchArguments = ["--ui-testing", "-deviceControlRoute", "ncmDeveloper"] + (demo ? ["--ui-test-demo-history"] : [])
+        app.launchArguments = ["--ui-testing"] + (demo ? ["--ui-test-demo-history"] : [])
         app.launch()
         return app
     }
@@ -326,7 +326,8 @@ import XCTest
         app.buttons["设置"].tap()
         XCTAssertTrue(app.navigationBars["设置"].waitForExistence(timeout: 5))
         XCTAssertTrue(app.buttons["openProviders"].exists)
-        XCTAssertTrue(app.buttons["esp32ControlSettings"].exists)
+        XCTAssertTrue(app.buttons["deviceConnectionSettings"].exists)
+        XCTAssertFalse(app.buttons["deviceControlMode"].exists)
         let title = app.navigationBars["设置"].staticTexts["设置"]
         XCTAssertLessThan(title.frame.height, 30)
         let titleY = title.frame.minY
@@ -336,21 +337,16 @@ import XCTest
         app.swipeDown()
         XCTAssertEqual(title.frame.minY, titleY, accuracy: 1)
         capture("settings")
-        app.buttons["esp32ControlSettings"].tap()
-        XCTAssertTrue(app.navigationBars["ESP32 控制"].waitForExistence(timeout: 5))
-        XCTAssertLessThan(app.navigationBars["ESP32 控制"].staticTexts["ESP32 控制"].frame.height, 30)
+        app.buttons["deviceConnectionSettings"].tap()
+        XCTAssertTrue(app.navigationBars["VPN 回环控制"].waitForExistence(timeout: 5))
+        XCTAssertLessThan(app.navigationBars["VPN 回环控制"].staticTexts["VPN 回环控制"].frame.height, 30)
         XCTAssertFalse(app.buttons["startScreenCapture"].exists)
         capture("device-panel")
     }
-    func testVPNLoopbackModePersistsAndShowsEditableAddresses() {
+    func testVPNConfigurationPersistsAndShowsEditableAddresses() {
         let app = launch()
         app.buttons["设置"].tap()
-        let mode = app.buttons["deviceControlMode"]
-        XCTAssertTrue(mode.waitForExistence(timeout: 5))
-        capture("vpn-parent-settings")
-        mode.tap()
-        app.buttons["VPN 回环"].tap()
-        app.buttons["esp32ControlSettings"].tap()
+        app.buttons["deviceConnectionSettings"].tap()
         XCTAssertTrue(app.navigationBars["VPN 回环控制"].waitForExistence(timeout: 5))
         XCTAssertFalse(app.staticTexts.matching(NSPredicate(format: "label CONTAINS %@", "共用系统配对身份")).firstMatch.exists)
         XCTAssertEqual(app.textFields["vpnLoopbackInterfaceAddress"].value as? String, "10.7.1.1")
@@ -359,7 +355,7 @@ import XCTest
         XCTAssertFalse(app.buttons["获取截图"].exists)
         let saveButton = app.navigationBars.buttons["saveVPNLoopbackConfiguration"]
         XCTAssertFalse(saveButton.exists)
-        XCTAssertTrue(app.staticTexts["建立连接阶段需要处于 Wi-Fi 环境"].exists)
+        XCTAssertTrue(app.textFields["vpnLoopbackPeerAddress"].exists)
         func saveConfiguration() {
             XCTAssertEqual(app.navigationBars.buttons.matching(identifier: "saveVPNLoopbackConfiguration").count, 1)
             saveButton.tap()
@@ -389,7 +385,7 @@ import XCTest
         capture("local-vpn-preset")
         app.terminate(); app.launchArguments = ["--ui-testing"]; app.launch()
         app.buttons["设置"].tap()
-        app.buttons["esp32ControlSettings"].tap()
+        app.buttons["deviceConnectionSettings"].tap()
         XCTAssertTrue(app.navigationBars["VPN 回环控制"].waitForExistence(timeout: 5))
         XCTAssertEqual(interfaceAddress.value as? String, "198.18.0.1")
         presets.tap()
@@ -401,7 +397,7 @@ import XCTest
         saveConfiguration()
         app.terminate(); app.launch()
         app.buttons["设置"].tap()
-        app.buttons["esp32ControlSettings"].tap()
+        app.buttons["deviceConnectionSettings"].tap()
         XCTAssertTrue(interfaceAddress.waitForExistence(timeout: 5))
         XCTAssertEqual(interfaceAddress.value as? String, "10.9.1.1")
         capture("local-vpn-custom-address")
@@ -422,17 +418,14 @@ import XCTest
         saveConfiguration()
         app.terminate(); app.launch()
         app.buttons["设置"].tap()
-        app.buttons["esp32ControlSettings"].tap()
+        app.buttons["deviceConnectionSettings"].tap()
         XCTAssertTrue(peerAddress.waitForExistence(timeout: 5))
         XCTAssertEqual(peerAddress.value as? String, "10.9.0.1")
         peerPresets.tap()
         app.buttons["10.7.0.1"].tap()
         saveConfiguration()
         app.navigationBars.buttons.element(boundBy: 0).tap()
-        app.buttons["deviceControlMode"].tap()
-        app.buttons["ESP32 NCM"].tap()
-        app.buttons["esp32ControlSettings"].tap()
-        XCTAssertTrue(app.navigationBars["ESP32 控制"].waitForExistence(timeout: 5))
+
     }
     private func openProviders(_ app: XCUIApplication) {
         XCTAssertFalse(app.buttons["openProviders"].exists)
@@ -502,7 +495,7 @@ import XCTest
         app.navigationBars.buttons.element(boundBy: 0).tap()
         XCTAssertFalse(app.buttons["deviceControls"].exists)
         app.buttons["设置"].tap()
-        app.buttons["esp32ControlSettings"].tap()
+        app.buttons["deviceConnectionSettings"].tap()
         XCTAssertTrue(app.navigationBars["VPN 回环控制"].waitForExistence(timeout: 5))
     }
     func testComposerActivationPreservesVisibleBottomAndMovesActionsBelowText() {

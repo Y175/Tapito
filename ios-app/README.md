@@ -14,21 +14,17 @@
 - `TapitoVoiceKit`：语音状态与音频适配。
 - `Tapito/Agent/AgentSessionController.swift` 是 iOS 组合根；`AgentPresentationAdapter` 将核心事件转换为 UI 展示。
 
-主 App 默认走 VPN 回环，设置中保留 ESP32 NCM 模式；普通聊天不要求设备连接。旧 ScreenCaptureKit/USB HID/TLS 实验源码不代表默认执行路线。
+主 App 仅通过本机 VPN 回环控制手机；普通聊天不要求设备连接。ESP32 NCM、USB HID、旧 TLS Host 桥接与固件构建已移除。
 
 ## Agent 正式执行路径
 
-正式入口使用 `WorkflowAgentEngine`，不是由 UI 逐轮决定下一步。
+正式入口使用 `HarnessAgentEngine`。模型接收核心提示词、技能名称/描述和本轮可用工具，按名称加载 Skill，再通过 Tool Call 执行；没有单独的 M1 路由或 route_task 校验关卡。
 
-1. M1 产出结构化任务；程序校验路由、供应商、技能及能力版本。
-2. 程序解析已安装 App，准备对应技能；当前屏幕任务不启动其他 App。
-3. 已审核页面序列通过本机画面核验后执行；未知页面走本地 OCR 与有预算的模型/Tool Call 探索。
-4. 工具批次完整预检、串行执行并提交回执；输入后程序重新观察。页面偏离可纠正剩余步骤，协议错误或动作结果未知直接停止。
-5. 回复完成后入队 M6/M7 分析；个人记忆和页面知识独立、可管理，不阻塞当前任务返回。
+程序完整校验批次、串行执行并返回回执；输入后自动 OCR。已审核页面能力可通过 `run_page` / `run_workflow` 复用本机位置核验。参数未发送时可返回模型纠正，协议错误或动作结果未知则停止，不自动重放。
 
-当前主链上限 32 次模型请求，每批最多 16 个工具，页面序列最多 16 段，观察纠错最多 2 次。页面/控件知识保存稳定 UI 元素与操作证据，动态内容和业务结果仍需当次核实；没有“所有步骤永久不截图或不 OCR”的保证。
+每个 App 一个 Skill，共用 `ios-operation`。已审核学习形成对应技能的 `references/learned-operations.md`，按需读取；文件由结构化存档生成，避免两份数据不同步。任务结束后独立入队 M6/M7，保持 UI、连接和学习分析解耦。
 
-内置 `ios-operation`、`ios-notes`、`ios-clock`、`wechat`、`weibo`、`qq` 技能由程序按任务装配。提示词的实际来源为 [WorkflowPrompts.swift](TapitoAgentKit/Sources/TapitoAgentSwiftAgentKit/WorkflowPrompts.swift)。模型接入、固定版本、纠错和学习规则以该代码及[运行文档](../docs/Tapito-WORKFLOW-RUNTIME.md)为准。
+主链上限 32 次模型请求，每批最多 16 个工具。提示词来源为 [WorkflowPrompts.swift](TapitoAgentKit/Sources/TapitoAgentSwiftAgentKit/WorkflowPrompts.swift)。每轮结构诊断独立落盘到 Application Support/Tapito/AgentDiagnostics，最多保留 30 轮，不记录输入正文或模型原始响应。
 
 ## 语音与系统入口
 
@@ -42,7 +38,7 @@
 
 在“设置 → 手机操控 → 连接与验证”建立本 App 的配对身份、启用 `Tapito 本机连接` 并核验屏幕/输入能力。首次添加 VPN 需要系统确认；VPN 本身不代替开发者模式、配对或 DDI 准备。
 
-内置 VPN 仅回注配置的本机接口与对端流量，不设置外部代理节点、DNS 或互联网默认路由。外部 VPN 仍可作为显式模式使用；切换连接模式不能发生在任务执行期间。
+内置 VPN 仅回注配置的本机接口与对端流量，不设置外部代理节点、DNS 或互联网默认路由。外部 VPN 仍可作为显式模式使用；修改连接配置不能发生在任务执行期间。
 
 户外初始化通过内置签名快捷指令编排“准备 → 开启飞行模式 → 离线建链 → 关闭飞行模式 → 恢复核验”。参数使用前一步的输出变量，不手填初始化编号。已有有效连接直接返回就绪。快捷指令中断后不能保证执行清理动作，必要时手动关闭飞行模式。
 
@@ -86,14 +82,18 @@ xcodebuild -project ios-app/Tapito.xcodeproj -scheme Tapito \
 swift test --package-path ios-app/TapitoAgentKit \
   --scratch-path .build/AgentCoreTests
 
+# OCR 候选位置选择测试，同样无需模拟器或真机。
+bash ios-app/scripts/test_ocr_selection.sh
+
 # 按需运行现有协议测试。
-CC=clang bash tools/test_usb_device.sh
+bash tools/test_ncm_rust.sh
+bash tools/test_ncm_chain.sh
 
 # 仅在明确需要 iOS 集成/UI 验证时使用隔离模拟器。
 bash ios-app/scripts/test_core.sh <isolated-simulator-UDID>
 RUN_UI_TESTS=1 bash ios-app/scripts/test_core.sh <isolated-simulator-UDID>
 ```
 
-2026-10-16 最近一次 Agent 验证：54 项主机测试通过、iPhoneOS `build-for-testing` 通过。iOS 适配测试完成编译，未在模拟器或真机执行；没有真实模型/设备动作或 P50/P95 耗时基准。见[完整记录](../docs/Tapito-WORKFLOW-RUNTIME.md#本轮验证)。
+2026-10-16 最近一次 Agent 验证：60 项 Agent 主机测试与 4 项 OCR 选择测试通过、iPhoneOS `build-for-testing` 通过。iOS 适配测试完成编译，未在模拟器或真机执行；没有真实模型/设备动作或 P50/P95 耗时基准。见[完整记录](../docs/Tapito-WORKFLOW-RUNTIME.md#本轮验证)。
 
 旧实验、归档用例及来源记录保留，入口见[归档说明](../archives/README.md)。当前 API 以源码和运行文档为准。

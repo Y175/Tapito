@@ -28,35 +28,64 @@ struct ContentView: View {
                 if sessions.conversations.isEmpty {
                     VStack(spacing: 22) {
                         Spacer()
-                        Image(systemName: "sparkle").font(.system(size: 46, weight: .light)).foregroundStyle(.blue)
-                            .frame(width: 98, height: 98).background(.blue.opacity(0.08), in: RoundedRectangle(cornerRadius: 30))
+                        Image(systemName: "cursorarrow.rays").font(.system(size: 42, weight: .medium)).foregroundStyle(TapitoPalette.accent)
+                            .frame(width: 98, height: 98).background(TapitoPalette.ink, in: RoundedRectangle(cornerRadius: 32))
                         VStack(spacing: 8) {
-                            Text("从一个想法开始").font(.title2.bold())
-                            Text("与 Agent 对话，查看执行过程，\n在需要时确认下一步。").multilineTextAlignment(.center).foregroundStyle(.secondary)
+                            Text("把想法，变成行动。").font(.system(.title2, design: .rounded, weight: .bold))
+                            Text("说出目标，让 Tapito 帮你操作 iPhone。\n随时查看进展，也随时可以停止。").multilineTextAlignment(.center).foregroundStyle(.secondary)
                         }
-                        Button(action: createConversation) { Label("新建会话", systemImage: "plus").padding(.horizontal, 20).padding(.vertical, 6) }
+                        Button(action: createConversation) { Label("开始新任务", systemImage: "arrow.up.right").padding(.horizontal, 20).padding(.vertical, 6) }
                             .buttonStyle(.borderedProminent).controlSize(.large).accessibilityIdentifier("newConversation")
                         Spacer(); Spacer()
                     }.padding(28).frame(maxWidth: .infinity)
                 } else {
                     List {
+                        Section {
+                            Button(action: createConversation) {
+                                HStack(spacing: 16) {
+                                    Image(systemName: "cursorarrow.rays").font(.title2).foregroundStyle(TapitoPalette.accent)
+                                    VStack(alignment: .leading, spacing: 6) {
+                                        Text("有什么交给我？").font(.title3.weight(.semibold)).foregroundStyle(.white)
+                                        Text("一句话，开始一个新任务").font(.caption).foregroundStyle(.white.opacity(0.6))
+                                    }
+                                    Spacer(minLength: 0)
+                                    Image(systemName: "plus").foregroundStyle(TapitoPalette.accent)
+                                }.padding(20).background(TapitoPalette.ink, in: RoundedRectangle(cornerRadius: 24))
+                            }.buttonStyle(.plain).accessibilityIdentifier("newTaskCard")
+                                .listRowInsets(EdgeInsets(top: 6, leading: 16, bottom: 20, trailing: 16))
+                                .listRowSeparator(.hidden).listRowBackground(Color.clear)
+                        }
+                        Section("最近会话") {
                         if let warning = sessions.warning { Label(warning, systemImage: "exclamationmark.triangle").font(.footnote).foregroundStyle(.orange) }
                         ForEach(visible) { session in
                             NavigationLink(value: session.id) {
-                                Text(session.title).font(.headline).lineLimit(1)
-                                    .frame(maxWidth: .infinity, minHeight: 40, alignment: .leading)
+                                HStack(alignment: .top, spacing: 12) {
+                                    Image(systemName: session.phase == .running ? "circle.dotted" : "bubble.left")
+                                        .foregroundStyle(.indigo).frame(width: 36, height: 36)
+                                        .background(Color.indigo.opacity(0.08), in: RoundedRectangle(cornerRadius: 12))
+                                    VStack(alignment: .leading, spacing: 6) {
+                                        Text(session.title).font(.subheadline.weight(.semibold)).lineLimit(1)
+                                        Text(session.preview).font(.caption).foregroundStyle(.secondary).lineLimit(1)
+                                        HStack(spacing: 6) {
+                                            Text(session.phase.label)
+                                            Text("·")
+                                            Text(session.updatedAt, style: .relative)
+                                        }.font(.caption2).foregroundStyle(.tertiary)
+                                    }.frame(maxWidth: .infinity, alignment: .leading)
+                                }.padding(.vertical, 4)
                             }
                             .listRowInsets(EdgeInsets(top: 10, leading: 20, bottom: 10, trailing: 16))
                             .swipeActions { if !model.isRunning(in: session.id) { Button("删除", role: .destructive) { sessions.delete(session.id) } } }
                         }
                         if visible.isEmpty { ContentUnavailableView.search(text: search) }
+                        }
                     }.listStyle(.plain)
                 }
             }
             .safeAreaInset(edge: .bottom, spacing: 0) {
                 VoiceSessionPanel(controller: voice, session: voice.session)
             }
-            .navigationTitle("会话")
+            .navigationTitle("Tapito")
             .searchable(text: $search, prompt: "搜索会话")
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) { Button { panel = .settings } label: { Image(systemName: "gear") }.accessibilityLabel("设置") }
@@ -72,6 +101,7 @@ struct ContentView: View {
             }
 
         }
+        .tint(.indigo)
         .onOpenURL { url in
             if url == URL(string: "tapito://home") {
                 consumedActivityNavigationID = model.activityNavigation?.id

@@ -13,7 +13,10 @@ private actor SpyBridge: DeviceBridge {
     let tapError: AppError?
     let capturedAt: Date
     init(tapError: AppError? = nil, capturedAt: Date = Date()) { self.tapError = tapError; self.capturedAt = capturedAt }
-    func screenshot() async throws -> FrameImage { FrameImage(id: "fresh", png: Data(), width: 390, height: 844, capturedAt: capturedAt, isDemo: true) }
+    func screenshot() async throws -> FrameImage {
+        let frame = try await DemoBridge().screenshot()
+        return .init(id: frame.id, png: frame.png, width: frame.width, height: frame.height, capturedAt: capturedAt, isDemo: true)
+    }
     func tap(x: Int, y: Int, imageID: String) async throws { taps += 1; if let tapError { throw tapError } }
     func drag(fromX: Int, fromY: Int, toX: Int, toY: Int, durationMS: Int, imageID: String) async throws { drags += 1 }
     func systemActionContext() async throws -> String { "synthetic-system-session" }
@@ -28,8 +31,8 @@ final class SafetyTests: XCTestCase {
     func testSystemActionsForwardExactTextAndArgumentsWithoutScreenshotDependency() async throws {
         let bridge = SpyBridge()
         let coordinator = ActionCoordinator(bridge: bridge, limits: AgentLimits(), approve: { _ in true }, onImage: { _, _ in }, onReceipt: { _ in })
-        _ = try await coordinator.execute(name: "type_text", parameters: ["text": "你好 ESP32 🌟\n ", "purpose": "insert requested whitespace"], callID: "text")
-        let text = await bridge.insertedText; XCTAssertEqual(text, "你好 ESP32 🌟\n ")
+        _ = try await coordinator.execute(name: "type_text", parameters: ["text": "你好 Tapito 🌟\n ", "purpose": "insert requested whitespace"], callID: "text")
+        let text = await bridge.insertedText; XCTAssertEqual(text, "你好 Tapito 🌟\n ")
         _ = try await coordinator.execute(name: "home", parameters: ["purpose": "home"], callID: "home-no-frame")
         _ = try await coordinator.execute(name: "launch_app", parameters: ["bundle_id": "example.fixture", "arguments": ["--test", "值"], "purpose": "open fixture"], callID: "launch")
         let arguments = await bridge.launchArguments, actions = await bridge.systemActions
@@ -52,9 +55,9 @@ final class SafetyTests: XCTestCase {
         XCTAssertTrue(dispatched.isEmpty)
         // Same session remains usable after preflight failure, with no reconnect.
         _ = try await coordinator.execute(name: "screenshot", parameters: [:], callID: "fresh-after-errors")
-        _ = try await coordinator.execute(name: "type_text", parameters: ["text": "ESP32 direct!", "purpose": "valid fixture"], callID: "t")
+        _ = try await coordinator.execute(name: "type_text", parameters: ["text": "Tapito direct!", "purpose": "valid fixture"], callID: "t")
         let inserted = await bridge.insertedText
-        XCTAssertEqual(inserted, "ESP32 direct!")
+        XCTAssertEqual(inserted, "Tapito direct!")
     }
     func testAppQueryNeedsNoScreenshotAndDoesNotExposePrivatePaths() async throws {
         let coordinator = ActionCoordinator(bridge: SpyBridge(), limits: AgentLimits(), approve: { _ in XCTFail("read query requested input approval"); return false }, onImage: { _, _ in }, onReceipt: { _ in })

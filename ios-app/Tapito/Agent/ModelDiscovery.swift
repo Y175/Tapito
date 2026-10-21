@@ -56,7 +56,7 @@ final class ModelDiscoveryClient: @unchecked Sendable {
         case .openRouter: components.queryItems = [.init(name: "limit", value: "100"), .init(name: "offset", value: String(offset))]
         case .chatGPTSubscription: throw AppError.unavailable(ChatGPTSubscriptionPolicy.mobileLoginNotice)
         case .openAI: if let cursor { components.queryItems = [.init(name: "after", value: cursor)] }
-        case .ollama: break
+        case .ollama, .jev: break
         }
         var request = URLRequest(url: components.url!)
         request.setValue("application/json", forHTTPHeaderField: "Accept")
@@ -101,7 +101,7 @@ final class ModelDiscoveryClient: @unchecked Sendable {
                     hasMore = (links["next"] as? String)?.isEmpty == false
                 } else { hasMore = page.count == 100 }
                 cursor = String(offset) // Never follow server-provided URLs with credentials.
-            case .ollama, .chatGPTSubscription: break
+            case .ollama, .chatGPTSubscription, .jev: break
             }
             guard hasMore else { break }
             guard !page.isEmpty, let next = cursor, !next.isEmpty,
@@ -126,14 +126,14 @@ final class ModelDiscoveryClient: @unchecked Sendable {
         return ModelCatalog(endpoint: try profile.catalogEndpoint(), fetchedAt: Date(), models: models)
     }
     static func parseList(_ value: [String: Any], providerKind: ProviderKind) throws -> [DiscoveredModel] {
-        let arrayKey = [.gemini, .ollama, .chatGPTSubscription].contains(providerKind) ? "models" : "data"
+        let arrayKey = [.gemini, .ollama, .chatGPTSubscription, .jev].contains(providerKind) ? "models" : "data"
         // Google omits an empty repeated field. Other missing arrays are format errors.
         let rows: [[String: Any]]
         if let list = value[arrayKey] as? [[String: Any]] { rows = list }
         else if providerKind == .gemini && value.isEmpty { rows = [] }
         else { throw AppError.invalid("模型列表格式与所选协议不匹配") }
         return try rows.filter { providerKind != .chatGPTSubscription || $0["visibility"] as? String == "list" }.map { row in
-            let raw = row[providerKind == .chatGPTSubscription ? "slug" : providerKind == .gemini ? "name" : providerKind == .ollama ? "name" : "id"] as? String
+            let raw = row[providerKind == .chatGPTSubscription ? "slug" : providerKind == .gemini || providerKind == .jev ? "name" : providerKind == .ollama ? "name" : "id"] as? String
             guard let id = raw, !id.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { throw AppError.invalid("模型列表中有无效 ID") }
             var model = DiscoveredModel(id: id, name: row["display_name"] as? String ?? row["displayName"] as? String ?? row["name"] as? String ?? id)
             switch providerKind {
@@ -147,6 +147,9 @@ final class ModelDiscoveryClient: @unchecked Sendable {
                     model.defaultReasoningEffort = suggested.flatMap { efforts.contains($0) ? $0 : nil }
                 }
 
+            case .jev:
+                model.vision = .unsupported; model.generation = .unsupported
+                model.detailNotice = "OCR 决策模式：从候选动作中直接选择，不使用聊天生成接口。"
             case .anthropic:
                 let caps = row["capabilities"] as? [String: [String: Any]]
                 model.vision = CapabilitySupport(caps?["image_input"]?["supported"] as? Bool)

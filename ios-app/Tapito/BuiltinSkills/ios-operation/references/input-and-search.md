@@ -7,7 +7,7 @@ Limits: nonempty text, at most 8192 UTF-8 bytes, no NUL. Existing selection dete
 Search example for the user's requested app and query:
 
 1. Reuse its confirmed installed bundle ID with `launch_app`; query `list_apps` only when unknown.
-2. `observe_screen` to find an unambiguous search entry in a known layout. If there are multiple "搜索" labels, only a magnifier icon, a modal overlay or uncertain editable state, inspect `screenshot(frame_id)` instead.
+2. `observe_screen` to find an unambiguous search entry in a known layout. Multiple "搜索" labels can use a candidate’s explicit `position` when the known page layout distinguishes the control. If their roles remain unclear, or there is only a magnifier icon, a modal overlay or uncertain editable state, inspect `screenshot(frame_id)` instead.
 3. Focus the entry using the observed target. OCR input consumes those candidates. Do not use the old list again on the changed page.
 4. Once focus is established, `type_text("牛肉面")` directly. A screenshot solely to make the text call is unnecessary. A visible keyboard is not a reason to tap its letters.
 5. Confirm input and the submission control with a fresh observation where state is uncertain. Submit by a known visible control. Typing and submitting are separate actions.

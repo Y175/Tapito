@@ -35,6 +35,13 @@ enum ToolStepState: String, Codable, Sendable {
         }
     }
 }
+/// Persisted measured interval. An unfinished archive has no invented completion duration.
+struct StepTiming: Codable, Sendable, Equatable {
+    /// Start timestamp for the running label; completed duration uses a monotonic clock.
+    var startedAt: Date
+    /// Nil for a running step or a process interruption without a recorded end.
+    var durationSeconds: TimeInterval?
+}
 struct ToolStep: Codable, Sendable, Equatable {
     var callID: String
     var name: String
@@ -45,6 +52,8 @@ struct ToolStep: Codable, Sendable, Equatable {
     // Only bounded public fields from our five registered tools are stored.
     var arguments: String?
     var skillName: String?
+    /// Actual tool interval; requested but unexecuted calls have no timing.
+    var timing: StepTiming?
     var displayArguments: String? { Self.nonemptyArguments(arguments) }
     var displayResult: String {
         if !result.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty { return result }
@@ -87,6 +96,8 @@ struct ToolStep: Codable, Sendable, Equatable {
         case "workflow_page": return "本机校验流程页面"
         case "list_workflows": return "查找专属操作流程"
         case "run_workflow": return "执行已学习流程"
+        case "run_page": return "执行已学习页面操作"
+        case "delegate_screen": return "Jev 执行当前阶段"
         case "name_workflow": return "记录流程名称"
         case "search_memory": return "检索个人记忆"
         case "remember_memory": return "保存个人记忆"
@@ -110,6 +121,10 @@ struct ChatMessage: Identifiable, Codable, Sendable, Equatable {
     var tool: ToolStep?
     var attachments: [StoredAttachment]?
     var reasoning: ReasoningMessage?
+    /// Model request sequence, including tool-only responses with no displayable answer.
+    var modelTurn: Int?
+    /// Model request duration; this is not hidden reasoning content.
+    var timing: StepTiming?
 }
 struct AgentConversation: Identifiable, Codable, Sendable {
     var id = UUID()
@@ -140,8 +155,9 @@ struct ConversationTurn: Identifiable {
     var thoughts: [ChatMessage] {
         messages.filter { $0.role == .assistant && $0.reasoning?.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty == false }
     }
+    var modelRequests: [ChatMessage] { messages.filter { $0.modelTurn != nil } }
     private func hasActivity(_ message: ChatMessage) -> Bool {
-        message.tool != nil || (message.role == .assistant && message.reasoning?.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty == false)
+        message.modelTurn != nil || message.tool != nil || (message.role == .assistant && message.reasoning?.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty == false)
     }
     var firstActivityID: UUID? { messages.first(where: hasActivity)?.id }
     var foldedMessages: [ChatMessage] {
@@ -151,6 +167,7 @@ struct ConversationTurn: Identifiable {
     }
     var summaryLabel: String {
         var counts: [String] = []
+        if !modelRequests.isEmpty { counts.append("\(modelRequests.count) 次模型请求") }
         if !tools.isEmpty { counts.append("\(tools.count) 次工具调用") }
         if !thoughts.isEmpty { counts.append("\(thoughts.count) 段思考") }
         return counts.joined(separator: " · ")

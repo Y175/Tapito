@@ -199,7 +199,8 @@ import TapitoVoiceAudio
             phase: phase, completedTools: latestStep?.state.completedTools ?? 0,
             approvalID: executing ? latestStep?.state.approvalID : nil, updatedAt: now,
             operation: executing ? latestStep?.state.operation : nil,
-            isVoiceSession: true, voiceRunID: latestStep?.attributes.runID)
+            isVoiceSession: true, voiceRunID: latestStep?.attributes.runID,
+            step: executing ? latestStep?.state.step : nil)
         model.liveActivities.submit(AgentActivitySnapshot(
             attributes: .init(sessionID: conversation, runID: sessionID, isDemo: false),
             state: content, staleDate: phase == .paused ? .distantFuture : now.addingTimeInterval(30)))

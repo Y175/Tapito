@@ -11,7 +11,6 @@ import Darwin
         for rows in [[], [row(), row()], [row(name: "en0")], [row(address: "192.168.7.2")], [row(flags: UInt32(IFF_UP))]] {
             XCTAssertThrowsError(try LocalVPNDiscovery.selectInterface(rows))
         }
-        XCTAssertThrowsError(try NCMInterfaceBinding.select([row()]))
     }
     func testCustomAddressesAreValidatedAndSelectOnlyMatchingVPN() throws {
         let config = try VPNLoopbackConfiguration(localAddress: " 10.8.1.1 ", peerAddress: "10.8.0.1")

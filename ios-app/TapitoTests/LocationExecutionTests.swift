@@ -123,12 +123,12 @@ final class LocationExecutionTests: XCTestCase {
             let driver = Driver()
             let location = LocationRunScheduler(makeDriver: { driver })
             let scheduler = RunExecutionScheduler(location: location)
-            scheduler.configure(context: nil, allowSystemProcessing: true, audioFree: voice, useLocation: true)
+            scheduler.configure(allowSystemProcessing: true, audioFree: voice, useLocation: true)
             XCTAssertTrue(scheduler.requiresSuccessfulSubmission)
             try scheduler.submit(identifier: "run") { _ in }
             XCTAssertEqual(driver.starts, 1)
             // A later configuration change cannot redirect the old run's stop.
-            scheduler.configure(context: nil, allowSystemProcessing: false)
+            scheduler.configure(allowSystemProcessing: false)
             scheduler.cancel(identifier: "run")
             XCTAssertEqual(driver.stops, 1)
         }

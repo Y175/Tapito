@@ -17,7 +17,6 @@ typedef struct { const uint8_t *data; size_t size; } ncm_bytes;
 typedef struct {
     ncm_bytes seed, controller_id, peer_id, peer_public_key, alt_irk, peer_udid, peer_model;
 } ncm_identity;
-typedef struct { uint32_t abi,interface_index,generation,endpoint_index,permissions; } ncm_config;
 enum ncm_failure_stage { NCM_STAGE_IDENTITY=1, NCM_STAGE_NCM_CONNECT=2, NCM_STAGE_PAIR_VERIFY=3, NCM_STAGE_TUNNEL_LISTENER=4, NCM_STAGE_TLS_TUNNEL=5, NCM_STAGE_RSD=6, NCM_STAGE_DEVELOPER_MODE=7, NCM_STAGE_DEVELOPER_IMAGE=8, NCM_STAGE_SCREENSHOT=9, NCM_STAGE_MEDIA=10, NCM_STAGE_INPUT=11, NCM_STAGE_CLOSED=12, NCM_STAGE_VIDEO_RECEIVER=13, NCM_STAGE_VIDEO_SERVICE=14, NCM_STAGE_VIDEO_NEGOTIATION=15, NCM_STAGE_VIDEO_ANSWER=16, NCM_STAGE_VIDEO_PACKETS=17, NCM_STAGE_TOUCH_SERVICE=18, NCM_STAGE_SCREENSHOT_CONNECTION=19, NCM_STAGE_SCREENSHOT_RESPONSE=20, NCM_STAGE_APPLICATIONS=21, NCM_STAGE_PAIR_GREETING=22 };
 enum ncm_failure_cause { NCM_CAUSE_PROTOCOL=1, NCM_CAUSE_TIMEOUT=2, NCM_CAUSE_INVALID=3, NCM_CAUSE_MISSING_SERVICE=4, NCM_CAUSE_UNPREPARED=5, NCM_CAUSE_MEDIA_INACTIVE=6, NCM_CAUSE_DELIVERY_UNCERTAIN=7, NCM_CAUSE_CONNECTION_CLOSED=15 };
 typedef struct { uint64_t request_id; uint32_t kind,stage,cause,reserved; size_t size; } ncm_event;
@@ -58,20 +57,11 @@ uint32_t ncm_backend_abi(void);
  * caller must reject new pairing when a record exists. No implicit fallback. */
 int32_t ncm_pairing_start(uint32_t consent,uint64_t *handle);
 int32_t ncm_pairing_ack(uint64_t handle,uint32_t state);
-int32_t ncm_backend_start(const ncm_config *,const ncm_identity *,uint64_t *handle);
 /* VPN loopback default utun 10.7.1.1 -> 10.7.0.1. No default route fallback.
  * pairing_port must be freshly discovered on this phone. Same permissions/identity. */
 int32_t ncm_local_vpn_start(uint32_t interface_index,uint16_t pairing_port,uint32_t permissions,const ncm_identity *,uint64_t *handle);
 /* Explicit IPv4 values in address order: 10.7.1.1 = 0x0a070101 (host integer). */
 int32_t ncm_local_vpn_start_configured(uint32_t interface_index,uint16_t pairing_port,uint32_t permissions,uint32_t local_ipv4,uint32_t peer_ipv4,const ncm_identity *,uint64_t *handle);
-/* Ordinary Lockdown, independent of RemotePairing. Caller-selected plist bytes
- * and expected UDID; permissions must be exactly NCM_ALLOW_EXISTING_VERIFY.
- * Ready event 2 means StartSession + pinned mutual TLS completed (no RSD/DDI).
- * Failure stages: 101 identity, 102 connect, 103 StartSession, 104 peer rejection,
- * 105 TLS, 106 StopSession, 107 closed. No payloads/keys are returned.
- * Use existing poll/close; action 5 explicitly StopSession over established TLS.
- * close cancels transport and does not assert remote StopSession completed. */
-int32_t ncm_lockdown_start(uint32_t interface_index,uint32_t permissions,ncm_bytes pairing_record,ncm_bytes expected_udid,uint64_t *handle);
 /* Actions: 1 read-only developer/DDI check, 2 capture PNG, 3 start media drain,
  * 4 tap normalized x/y; 11 release owned media/HID streams (idempotent),
  * retaining the authenticated tunnel. No global stopAll. Every accepted request id must increase; no replay.
@@ -92,7 +82,7 @@ void ncm_backend_close(uint64_t handle);
 #ifdef NCM_OFFLINE_FIXTURES
 /* Exists only in the separately built test archive; always 127.0.0.1. Public
  * deterministic fixture identity, no persistent keys or real-device fallback. */
-int32_t ncm_test_start_loopback(uint16_t relay_port,uint64_t *handle);
+int32_t ncm_test_start_loopback(uint16_t peer_port,uint64_t *handle);
 /* Synthetic recoverable preparation / uncertain delivery ownership fixture. */
 int32_t ncm_test_start_media_failure(uint64_t *handle);
 /* Synthetic HEVC burst, no network; absent from device archives. */

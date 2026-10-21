@@ -149,13 +149,11 @@ struct ConversationView: View {
             }.padding(.vertical, 20)
         } else if session.messages.isEmpty { welcome(session.mode) }
         ForEach(ConversationTurn.group(session.messages)) { turn in
-            if let runID = turn.runID, runID == presentation.activeTurnID {
-                ForEach(turn.messages) { message in messageView(message).id(message.id) }
-            } else {
-                completedTurn(turn)
-            }
+            completedTurn(turn)
         }
-        if running && presentation.pendingApproval == nil { HStack(spacing: 8) { ProgressView().controlSize(.small); Text(presentation.status).font(.caption).foregroundStyle(.secondary) } }
+        if running && presentation.activityState == nil {
+            HStack(spacing: 8) { ProgressView().controlSize(.small); Text(presentation.status).font(.caption).foregroundStyle(.secondary) }
+        }
         Color.clear.frame(height: 1).id("latest")
             .onScrollVisibilityChange(threshold: 0.01) { visible in
                 lastMessageVisible = visible
@@ -261,9 +259,11 @@ struct ConversationView: View {
     }
     private func welcome(_ mode: RunMode) -> some View {
         VStack(alignment: .leading, spacing: 18) {
-            Image(systemName: "sparkles").font(.largeTitle).foregroundStyle(.blue).padding(.top, 34)
-            Text("有什么可以一起完成？").font(.title2.bold())
-            Text(mode == .demo ? "这个会话使用固定脚本，带你走一遍查看屏幕、确认点击和检查结果的流程。" : "描述你的问题或目标。Agent 的回复和每次工具执行都会保留在这里。")
+            Image(systemName: "cursorarrow.rays").font(.system(size: 28, weight: .medium))
+                .foregroundStyle(TapitoPalette.accent).frame(width: 64, height: 64)
+                .background(TapitoPalette.ink, in: RoundedRectangle(cornerRadius: 22)).padding(.top, 34)
+            Text("一句话，开始行动。").font(.system(.title, design: .rounded, weight: .bold))
+            Text(mode == .demo ? "通过离线演示，体验观察、操作与核验。" : "告诉 Tapito 你想完成什么。\n执行进展会显示在这里和灵动岛。")
                 .foregroundStyle(.secondary)
             Button(mode == .demo ? "体验一次完整演示" : "帮我梳理一个任务的执行步骤") {
                 draft = mode == .demo ? "查看演示画面，点击计数器一次，再检查结果" : "帮我梳理一个任务的执行步骤"
@@ -276,42 +276,52 @@ struct ConversationView: View {
         let foldedIDs = Set(folded.map(\.id))
         return VStack(alignment: .leading, spacing: 12) {
             ForEach(turn.messages) { message in
+                if message.role == .user, turn.runID == presentation.activeTurnID,
+                   let state = presentation.activityState {
+                    messageView(message).id(message.id)
+                    AgentProgressSummary(presentation: .init(state: state))
+                        .padding(16).background(TapitoPalette.ink, in: RoundedRectangle(cornerRadius: 22))
+                        .accessibilityIdentifier("agentExecutionCard")
+                }
                 if message.id == folded.first?.id {
                     ConversationDisclosureGroup {
                         VStack(alignment: .leading, spacing: 12) {
                             ForEach(folded) { item in
+                                if item.modelTurn != nil { ModelRequestStepView(message: item) }
                                 if let reasoning = item.reasoning, !reasoning.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                                     ReasoningMessageView(reasoning: reasoning, messageID: item.id)
                                 }
                                 if item.role != .assistant || item.id != folded.last?.id {
-                                    messageView(item, includeReasoning: false).id(item.id)
+                                    messageView(item, includeReasoning: false, includeModelStep: false).id(item.id)
                                 }
                             }
                         }.padding(.top, 8)
                     } label: {
                         HStack(spacing: 8) {
                             MessageHeaderIcon(systemName: "text.bubble")
-                            Text(turn.summaryLabel)
+                            Text("执行记录 · " + turn.summaryLabel).font(.subheadline)
                         }
                     }
                 }
-                if !foldedIDs.contains(message.id) || (message.id == folded.last?.id && message.role == .assistant) {
+                if !(message.role == .user && turn.runID == presentation.activeTurnID && presentation.activityState != nil),
+                   !foldedIDs.contains(message.id) || (message.id == folded.last?.id && message.role == .assistant) {
                     if message.role != .tool && (message.role != .assistant || !message.text.isEmpty || message.attachments?.isEmpty == false || message.state == .interrupted || message.state == .failed) {
-                        messageView(message, includeReasoning: false).id(message.id)
+                        messageView(message, includeReasoning: false, includeModelStep: !foldedIDs.contains(message.id)).id(message.id)
                     }
                 }
             }
         }
     }
-    @ViewBuilder private func messageView(_ message: ChatMessage, includeReasoning: Bool = true) -> some View {
+    @ViewBuilder private func messageView(_ message: ChatMessage, includeReasoning: Bool = true, includeModelStep: Bool = true) -> some View {
         switch message.role {
         case .user:
             VStack(alignment: .trailing, spacing: 8) {
-                HStack { Spacer(minLength: 36); Text(message.text).textSelection(.enabled).padding(12).background(.blue.opacity(0.10), in: RoundedRectangle(cornerRadius: 18)).foregroundStyle(.primary) }
+                HStack { Spacer(minLength: 36); Text(message.text).textSelection(.enabled).padding(.horizontal, 16).padding(.vertical, 13).background(Color.indigo.opacity(0.09), in: RoundedRectangle(cornerRadius: 22)).foregroundStyle(.primary) }
                 MessageAttachmentsView(message: message, presentation: presentation)
             }
         case .assistant:
             VStack(alignment: .leading, spacing: 6) {
+                if includeModelStep, message.modelTurn != nil { ModelRequestStepView(message: message) }
                 if includeReasoning, let reasoning = message.reasoning, !reasoning.text.isEmpty {
                     ReasoningMessageView(reasoning: reasoning, messageID: message.id)
                 }
@@ -383,7 +393,8 @@ struct ConversationView: View {
                     if focused { sendButton }
                 }.padding(.leading, 4).padding(.trailing, 8)
             }.padding(.vertical, 6)
-                .glassEffect(.regular, in: RoundedRectangle(cornerRadius: 24))
+                .background(Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 24))
+                .overlay(RoundedRectangle(cornerRadius: 24).strokeBorder(Color.primary.opacity(0.08)))
         }.padding(.horizontal, 16).padding(.top, 10).padding(.bottom, 8)
     }
     private var attachmentButton: some View {
@@ -393,7 +404,7 @@ struct ConversationView: View {
     private var messageField: some View {
         ZStack(alignment: .topLeading) {
             if draft.isEmpty {
-                Text("随心输入").foregroundStyle(.tertiary).padding(.vertical, 10)
+                Text("告诉 Tapito，要做什么…").foregroundStyle(.tertiary).padding(.vertical, 10)
                     .allowsHitTesting(false).accessibilityHidden(true)
             }
             MessageInput(text: $draft, focused: $focused, disabled: running || presentation.stopping || sendingAttachments, onSubmit: send)
@@ -408,7 +419,7 @@ struct ConversationView: View {
                 .buttonStyle(.borderedProminent).disabled(!canSend)
                 .accessibilityIdentifier("confirmSiriTask")
         } else {
-            Button { send() } label: { Image(systemName: "arrow.up").font(.body.bold()).frame(width: 38, height: 38).background(.blue, in: Circle()).foregroundStyle(.white) }
+            Button { send() } label: { Image(systemName: "arrow.up").font(.body.bold()).frame(width: 38, height: 38).background(Color.indigo, in: Circle()).foregroundStyle(.white) }
                 .disabled(!canSend)
                 .accessibilityLabel("发送").accessibilityIdentifier("sendMessage")
         }

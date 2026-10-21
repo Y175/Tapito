@@ -62,7 +62,11 @@ public struct AssistantToolCall: Sendable {
 public struct AssistantToolResult: Sendable {
     public let result: String
     public let isError: Bool
-    public init(result: String, isError: Bool) { self.result = result; self.isError = isError }
+    /// Measured execution time, excluding model deliberation and queued calls; nil means unmeasured.
+    public let durationSeconds: TimeInterval?
+    public init(result: String, isError: Bool, durationSeconds: TimeInterval? = nil) {
+        self.result = result; self.isError = isError; self.durationSeconds = durationSeconds
+    }
 }
 
 /// Provider-neutral response metadata, excluding provider internals.
@@ -71,15 +75,22 @@ public struct AssistantResponse: Sendable {
     public let text: String
     public let reasoning: String?
     public let usage: Usage?
-    public init(text: String, reasoning: String? = nil, totalTokens: Int? = nil) {
+    /// Whole model request time, including network waiting and streaming.
+    public let durationSeconds: TimeInterval?
+    public init(text: String, reasoning: String? = nil, totalTokens: Int? = nil, durationSeconds: TimeInterval? = nil) {
         self.text = text; self.reasoning = reasoning; self.usage = totalTokens.map { Usage(totalTokens: $0) }
+        self.durationSeconds = durationSeconds
     }
 }
 
 /// Ordered events understood by any presentation layer, including a future replacement UI.
 public enum AssistantEvent: Sendable {
+    /// Program-owned model purpose, never model-generated reasoning or tool arguments.
+    case modelStageChanged(AssistantModelStage)
     case llmCallStarted(turn: Int)
     case llmCallCompleted(turn: Int, response: AssistantResponse)
+    /// Failed model intervals end at the provider error, not after host cleanup.
+    case llmCallFailed(turn: Int, durationSeconds: TimeInterval)
     case streamChunk(String), reasoningChunk(String)
     case toolCallsReceived([AssistantToolCall])
     case toolExecutionStarted(call: AssistantToolCall)
@@ -89,6 +100,11 @@ public enum AssistantEvent: Sendable {
     /// Provider stream activity without exposing routing JSON or private reasoning.
     case modelProgress
     case notice(String)
+}
+
+/// Semantic model nodes shared by event consumers without importing any UI framework.
+public enum AssistantModelStage: String, Sendable {
+    case planning, verifying, correcting, answering
 }
 
 /// User-visible conversation history is separate from durable personal memory.
@@ -149,6 +165,10 @@ public struct AssistantMessage: Sendable {
 /// A host preflight proved that input was not dispatched and a new observation can resolve it.
 public struct WorkflowCorrectionRequired: Error, LocalizedError, Sendable {
     public let message: String
-    public init(_ message: String) { self.message = message }
+    /// True only when the host discarded an obsolete screen before sending input.
+    public let requiresObservation: Bool
+    public init(_ message: String, requiresObservation: Bool = false) {
+        self.message = message; self.requiresObservation = requiresObservation
+    }
     public var errorDescription: String? { message }
 }

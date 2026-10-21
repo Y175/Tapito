@@ -2,6 +2,7 @@ import XCTest
 import UIKit
 import SwiftAgentKit
 import ProviderCore
+import TapitoAgentCore
 @testable import Tapito
 
 @MainActor final class ScreenTextTests: XCTestCase {
@@ -68,9 +69,22 @@ import ProviderCore
         let id = try XCTUnwrap(try json(text)["frame_id"] as? String)
         let visual = try await actions.execute(name: "screenshot", parameters: ["frame_id": id], callID: "vision")
         XCTAssertEqual(visual.images.map(\.data), [source.png])
-        let count = await bridge.captureCount; XCTAssertEqual(count, 1)
+        let count = await bridge.captureCount; XCTAssertEqual(count, 2)
         XCTAssertEqual(try json(visual)["image_id"] as? String, id)
     }
+    func testChangedTargetIsRejectedBeforeDispatchAndRequestsAutomaticFreshObservation() async throws {
+        let source = frame(), bridge = OCRFixtureBridge(frame: source, changedFrame: frame(blank: true))
+        let actions = coordinator(bridge)
+        _ = try await actions.execute(name: "screenshot", parameters: [:], callID: "reference")
+        let tool = DeviceTool(name: "tap", coordinator: actions, programManaged: true)
+        do {
+            _ = try await tool.execute(context: .init(callId: "changed", toolName: "tap",
+                parameters: ["x": 120, "y": 70, "purpose": "Synthetic text target"], state: AgentState()))
+            XCTFail("A moved target cannot be clicked")
+        } catch let error as WorkflowCorrectionRequired { XCTAssertTrue(error.requiresObservation) }
+        let points = await bridge.points; XCTAssertTrue(points.isEmpty)
+    }
+
     func testCandidateReceiptsExplainTextLocationEligibilityWithoutClaimingClickability() throws {
         let bounds = ScreenTextCandidate.PixelBounds(x: 20, y: 20, width: 60, height: 40)
         let observation = ScreenTextObservation(frameID: "eligibility", width: 600, height: 360, candidates: [
@@ -100,7 +114,7 @@ import ProviderCore
         XCTAssertEqual(visual.images.count, 1)
         _ = try await actions.execute(name: "tap", parameters: parameters, callID: "visually-chosen")
         let points = await bridge.points; XCTAssertEqual(points.count, 1)
-        let count = await bridge.captureCount; XCTAssertEqual(count, 1, "A rejected unsent tap must not force a second capture")
+        let count = await bridge.captureCount; XCTAssertEqual(count, 3, "Stable OCR pair plus one final target recheck; rejected tap and visual reuse do not capture")
     }
     func testDefaultVisualObservationReusesOCRAndRepeatedViewingDoesNotUploadAgain() async throws {
         let bridge = OCRFixtureBridge(frame: frame()), actions = coordinator(bridge)
@@ -113,12 +127,12 @@ import ProviderCore
         XCTAssertTrue(repeated.images.isEmpty)
         XCTAssertEqual(try json(repeated)["image_already_sent"] as? Bool, true)
         XCTAssertEqual(try json(repeated)["image_uploaded"] as? Bool, false)
-        let beforeRefresh = await bridge.captureCount; XCTAssertEqual(beforeRefresh, 1)
+        let beforeRefresh = await bridge.captureCount; XCTAssertEqual(beforeRefresh, 2)
         let refresh = try await actions.execute(name: "screenshot", parameters: ["refresh_reason": "A loading animation changed the page"], callID: "refresh")
         XCTAssertEqual(refresh.images.count, 1)
         XCTAssertNotEqual(try json(refresh)["image_id"] as? String, id)
         XCTAssertEqual(try json(refresh)["observation_source"] as? String, "fresh_capture")
-        let afterRefresh = await bridge.captureCount; XCTAssertEqual(afterRefresh, 2)
+        let afterRefresh = await bridge.captureCount; XCTAssertEqual(afterRefresh, 4)
         do { _ = try await actions.execute(name: "screenshot", parameters: ["frame_id": id], callID: "stale"); XCTFail("Refresh consumes the old OCR frame") } catch {}
     }
     func testLowConfidenceTextRejectionKeepsObservationButAChangedFrameCannotUseOldVisualGrant() async throws {
@@ -147,13 +161,30 @@ import ProviderCore
         _ = try await actions.execute(name: "tap_text", parameters: tap(id), callID: "t")
         let points = await bridge.points
         XCTAssertEqual(points.count, 1)
-        XCTAssertEqual(points.first?.0, try Wire.normalized(pixel: 50, dimension: 600))
-        XCTAssertEqual(points.first?.1, try Wire.normalized(pixel: 40, dimension: 360))
+        XCTAssertEqual(points.first?.0, try DeviceCoordinates.normalized(pixel: 50, dimension: 600))
+        XCTAssertEqual(points.first?.1, try DeviceCoordinates.normalized(pixel: 40, dimension: 360))
         do { _ = try await actions.execute(name: "tap_text", parameters: tap(id), callID: "repeat"); XCTFail("Old OCR cannot repeat input") } catch {}
         do { _ = try await actions.execute(name: "screenshot", parameters: ["frame_id": id], callID: "old"); XCTFail("Changed page cannot send the old OCR frame") } catch {}
         _ = try await actions.execute(name: "type_text", parameters: ["text": "牛肉面🙂", "purpose": "Insert exact requested text"], callID: "text")
         let inserted = await bridge.text; XCTAssertEqual(inserted, "牛肉面🙂")
-        let count = await bridge.captureCount; XCTAssertEqual(count, 1, "Focused input needs no extra screenshot")
+        let count = await bridge.captureCount; XCTAssertEqual(count, 3, "Stable OCR pair and target check; focused text input itself needs no screenshot")
+    }
+    func testSameLabelControlWithExplicitPositionNeedsNoVisualUpload() async throws {
+        let bridge = OCRFixtureBridge(frame: frame())
+        let actions = coordinator(bridge, recognizer: StubScreenTextRecognizer(duplicate: true, separated: true))
+        let observation = try await actions.execute(name: "observe_screen", parameters: [:], callID: "ocr")
+        XCTAssertTrue(observation.images.isEmpty)
+        let id = try XCTUnwrap(try json(observation)["frame_id"] as? String)
+        var parameters = tap(id)
+        parameters["position"] = "topmost"
+        let result = try await actions.execute(name: "tap_text", parameters: parameters, callID: "top-search")
+        XCTAssertTrue(result.images.isEmpty)
+        let points = await bridge.points
+        XCTAssertEqual(points.count, 1)
+        XCTAssertEqual(points.first?.1, try DeviceCoordinates.normalized(pixel: 40, dimension: 360))
+        let captures = await bridge.captureCount
+        XCTAssertEqual(captures, 3)
+        do { _ = try await actions.execute(name: "tap_text", parameters: parameters, callID: "stale"); XCTFail("Input still invalidates OCR") } catch {}
     }
     func testDuplicateLowConfidenceAndOtherFrameCandidatesNeverDispatch() async throws {
         for recognizer in [StubScreenTextRecognizer(duplicate: true), StubScreenTextRecognizer(confidence: 0.4)] {
@@ -175,7 +206,7 @@ import ProviderCore
             XCTAssertTrue(result.isError); XCTAssertTrue(result.images.isEmpty)
             XCTAssertFalse(result.result.contains("no_text"))
             XCTAssertTrue(result.result.contains(failure ? "Capture fixture failure" : "OCR fixture failure"))
-            let count = await bridge.captureCount; XCTAssertEqual(count, 1)
+            let count = await bridge.captureCount; XCTAssertEqual(count, failure ? 1 : 2)
         }
     }
     func testVideoPreparationFailureStopsRepeatedOCRVisualCaptureAndInputInTheSameRun() async throws {
@@ -214,7 +245,7 @@ import ProviderCore
             response = try await actions.execute(name: "observe_screen", parameters: ["frame_id": try XCTUnwrap(object["frame_id"]), "offset": next], callID: "page-\(next)")
         }
         XCTAssertEqual(seen.count, 100); XCTAssertEqual(Set(seen).count, 100)
-        let count = await bridge.captureCount; XCTAssertEqual(count, 1)
+        let count = await bridge.captureCount; XCTAssertEqual(count, 2)
     }
     func testActualAgentReadsOCRAndTypesIntoFocusedFieldWithoutSendingScreenImages() async throws {
         let bridge = OCRFixtureBridge(frame: frame())
@@ -233,32 +264,35 @@ import ProviderCore
         XCTAssertEqual(tools.map(\.name), ["observe_screen", "type_text"])
         XCTAssertTrue(tools.allSatisfy { $0.state == .succeeded }, tools.map { "\($0.name): \($0.state) \($0.result)" }.joined(separator: " | "))
         let inserted = await bridge.text; XCTAssertEqual(inserted, "牛肉面🙂")
-        let count = await bridge.captureCount; XCTAssertEqual(count, 1)
+        let count = await bridge.captureCount; XCTAssertEqual(count, 2)
         let points = await bridge.points; XCTAssertTrue(points.isEmpty, "An already focused field needs no coordinate tap")
     }
 }
 
 private struct StubScreenTextRecognizer: ScreenTextRecognizing {
-    var duplicate = false, confidence: Float = 0.97, fails = false, delay = false, count = 1
+    var duplicate = false, separated = false, confidence: Float = 0.97, fails = false, delay = false, count = 1
     func recognize(_ frame: FrameImage) async throws -> ScreenTextObservation {
         if delay { try await Task.sleep(for: .milliseconds(100)) }
         if fails { throw AppError.unavailable("OCR fixture failure") }
         return .init(frameID: frame.id, width: frame.width, height: frame.height,
             candidates: (0..<(duplicate ? 2 : count)).map { .init(id: "text-\($0 + 1)", text: duplicate ? "搜索" : "Target \($0)",
-                confidence: confidence, bounds: .init(x: 20, y: 20, width: 60, height: 40)) }, elapsedMS: 1)
+                confidence: confidence, bounds: .init(x: 20, y: separated ? 20 + $0 * 200 : 20, width: 60, height: 40)) }, elapsedMS: 1)
     }
 }
 private actor OCRFixtureBridge: DeviceBridge {
     let source: FrameImage, captureFails: Bool, captureUnavailable: Bool
+    let changedFrame: FrameImage?
     var captureCount = 0, points: [(Int, Int)] = [], text = ""
-    init(frame: FrameImage, captureFails: Bool = false, captureUnavailable: Bool = false) {
+    init(frame: FrameImage, captureFails: Bool = false, captureUnavailable: Bool = false, changedFrame: FrameImage? = nil) {
+        self.changedFrame = changedFrame
         source = frame; self.captureFails = captureFails; self.captureUnavailable = captureUnavailable
     }
     func screenshot() throws -> FrameImage {
         captureCount += 1
         if captureUnavailable { throw AppError.screenCaptureUnavailable("屏幕视频会话启动失败；OCR 未开始；本次未发送触控输入") }
         if captureFails { throw AppError.unavailable("Capture fixture failure") }
-        return .init(id: "frame-\(captureCount)", png: source.png, width: source.width, height: source.height, capturedAt: Date(), isDemo: true)
+        let current = captureCount >= 3 ? (changedFrame ?? source) : source
+        return .init(id: "frame-\(captureCount)", png: current.png, width: current.width, height: current.height, capturedAt: Date(), isDemo: true)
     }
     func tap(x: Int, y: Int, imageID: String) { points.append((x, y)) }
     func drag(fromX: Int, fromY: Int, toX: Int, toY: Int, durationMS: Int, imageID: String) {}

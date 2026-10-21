@@ -1,6 +1,8 @@
 // swift-tools-version: 6.2
 import PackageDescription
 
+// Core includes the per-app skill catalog and monotonic step timing; orchestration stays in the adapter target.
+
 let package = Package(
     name: "TapitoAgentKit",
     platforms: [.macOS(.v13), .iOS("27.0")],

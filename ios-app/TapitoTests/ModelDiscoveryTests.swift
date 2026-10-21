@@ -22,6 +22,19 @@ private final class ModelHTTPStub: URLProtocol, @unchecked Sendable {
 }
 
 final class ModelDiscoveryTests: XCTestCase {
+    @MainActor func testJevUsesNativeModelsAndDoesNotRequireVisionOrGeneration() throws {
+        var p = profile(.jev, base: "https://api.typesafe.ai/v1")
+        p.settings.model = "jev-1.14.0"
+        let rows = try ModelDiscoveryClient.parseList(["models": [["name": "jev-1.14.0", "description": "fixture"]]], providerKind: .jev)
+        XCTAssertEqual(rows.map(\.id), ["jev-1.14.0"])
+        p.catalog = .init(endpoint: try p.catalogEndpoint(), fetchedAt: Date(), models: rows)
+        XCTAssertNoThrow(try p.requireInference(model: p.settings.model))
+        XCTAssertEqual(p.inferenceAPI, .systemOne)
+        XCTAssertEqual(try ModelDiscoveryClient().request(profile: p, key: "synthetic").url?.path, "/v1/models")
+        XCTAssertNoThrow(try ProviderStore(defaults: nil).save(p))
+        XCTAssertTrue(ModelParameter.fields(for: .jev).isEmpty)
+    }
+
     @MainActor func testExplicitDefaultProviderSurvivesRecentChoiceAndReload() throws {
         let defaults = UserDefaults(suiteName: "tapito-default-provider-\(UUID())")!
         defer { defaults.removeObject(forKey: ProviderStore.storageKey) }
@@ -151,7 +164,7 @@ final class ModelDiscoveryTests: XCTestCase {
         XCTAssertEqual(p.previewModels, ["model-7"])
     }
     @MainActor func testRemovedServiceChoicesKeepExistingArchiveReadable() throws {
-        XCTAssertEqual(ProviderKind.selectableKinds, [.openAI, .openRouter, .chatGPTSubscription])
+        XCTAssertEqual(ProviderKind.selectableKinds, [.openAI, .openRouter, .chatGPTSubscription, .jev])
         let defaults = UserDefaults(suiteName: "removed-provider-types-\(UUID())")!
         defer { defaults.removeObject(forKey: ProviderStore.storageKey) }
         let legacy = [ProviderKind.anthropic, .gemini, .ollama].map { kind in

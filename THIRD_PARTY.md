@@ -1,5 +1,7 @@
 # Provenance and licenses
 
+> 2026-10-16 范围更新：ESP32 固件、PA3 USB HID、旧 TLS Host 桥接和专用测试已从当前源码移除。下文对这些文件、依赖及工具链的说明仅保留为历史来源记录，不代表当前 App 包含这些模块。保留的 CoreDevice/VPN 协议及其他依赖仍遵循各自原有许可证。
+
 ## Tapito source snapshot
 
 Tapito's initial source snapshot is based on [Actell](https://github.com/ja1chen/actell)
